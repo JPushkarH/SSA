@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Swachha Sadak — स्वच्छ सड़क अभियान (3.8 Gemini)</title>
+<title>Swachha Sadak — स्वच्छ सड़क अभियान</title>
 <link rel="icon" type="image/png" href="sl.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
@@ -184,36 +184,6 @@
   .form-msg{ font-family:var(--mono); font-size:13px; margin-top:14px; display:none; align-items:center; gap:8px; }
   .form-msg.show{ display:flex; } .form-msg.warn{ color:#a13; }
 
-
-  /* ---------------- join modal ---------------- */
-  #join-modal{
-    position:fixed; inset:0; z-index:400;
-    display:none; align-items:center; justify-content:center;
-    padding:24px; background:rgba(11,18,16,.72);
-    backdrop-filter:blur(5px);
-  }
-  #join-modal.open{ display:flex; animation:lb-fade .25s ease; }
-  #join-modal .join-modal-panel{
-    position:relative; width:min(760px,100%); max-height:92vh;
-    overflow-y:auto; background:var(--paper);
-    border-radius:var(--radius);
-    box-shadow:0 30px 70px -20px rgba(0,0,0,.55);
-    padding:20px;
-  }
-  #join-modal .signup{ margin:0; }
-  #join-modal-close{
-    position:sticky; top:0; z-index:2; float:right;
-    width:42px; height:42px; border:1px solid var(--line);
-    border-radius:50%; background:var(--surface); color:var(--navy);
-    font-size:26px; line-height:1; cursor:pointer;
-  }
-  #join-modal-close:hover{ background:var(--navy); color:#fff; }
-  body.join-modal-open{ overflow:hidden; }
-  @media (max-width:640px){
-    #join-modal{ padding:10px; align-items:flex-start; }
-    #join-modal .join-modal-panel{ max-height:96vh; padding:14px; margin-top:10px; }
-  }
-
   /* floating join button */
   #fab-join{ position:fixed; right:22px; bottom:26px; z-index:150; display:flex; align-items:center; gap:10px;
     padding:14px 20px 14px 16px; border-radius:40px; background:var(--navy); color:#fff; text-decoration:none;
@@ -344,9 +314,9 @@
       <span class="brand-text"><b>Swachha</b> <i>Sadak</i></span>
     </a>
     <nav class="links">
-      <a href="#about">About</a><!-- <a href="#recognition">Recognitions</a> --><a href="#gallery">Gallery</a><!-- <a href="#documents">Docs</a> --><a href="#appeal">Appeal</a><a href="#pledge">Pledge</a>
+      <a href="#about">About</a><a href="#gallery">Gallery</a><!-- <a href="#documents">Docs</a> --><a href="#appeal">Appeal</a><a href="#pledge">Pledge</a>
     </nav>
-    <a class="btn ghost join-trigger" href="#join-modal" style="padding:9px 16px;">Join the Mission</a>
+    <a class="btn ghost" href="#join" style="padding:9px 16px;">Join the Mission</a>
   </div>
 </header>
 
@@ -360,7 +330,7 @@
         <img class="hero-logo-img" src="bl.png" alt="Swachha Sadak — स्वच्छ सड़क अभियान">
         <p class="lede">A Clean Road is the ultimate reflection of a disciplined, progressive nation. We're building citizen-led systems — not just awareness — to end littering on India's public roads.</p>
         <div class="hero-ctas">
-         <!--  <a href="#join-modal" class="btn join-trigger">Become an Associate</a>
+         <!--  <a href="#join" class="btn">Become an Associate</a>
           <a href="#appeal" class="btn ghost">Partner With Us</a> -->
         </div>
       <!--   <div class="hero-stats">
@@ -402,24 +372,29 @@
           <p>अपने घरका कचरा सडको पर फेकने वाले लोगो को प्रतिबंध करने की व्यवस्था दुरुस्त करे.</p></div>
       </div>
     </div>
-    <div class="wrap" style="margin-top:28px;" data-section-docs="About"></div>
-  </div>
   </section>
 
    <!-- ================= Recognitions ================= -->
   <section class="tint diag" id="recognition">
     <div class="wrap">
       <div class="section-head" data-reveal>
-        <div class="eyebrow">Recognitions</div>
-        <h2>Recognitions &amp; Honors</h2>
-        <p>Certificates, appreciation letters, and official honors received during the Swachha Sadak campaign.</p>
+        <div class="eyebrow">Gallery</div>
+        <!-- <h2>Drives, in photos and video.</h2> -->
+        <h2>Recognitions</h2>
+
+        <!-- <p>Every photo from the campaign's Google Drive — root and nested folders — in one scrollable strip. Descriptions come from a matching .txt file next to each photo. Click a photo to view it full-screen.</p> -->
       </div>
-      <div id="rec-carousel-state" class="gallery-state">Loading recognition photos…</div>
+      <div id="carousel-state" class="gallery-state">Loading photos…</div>
       <div class="carousel-wrap">
-        <button type="button" id="rec-car-prev" class="car-arrow car-arrow-left" aria-label="Scroll left">&#10094;</button>
-        <div class="carousel-track" id="rec-carousel-track"></div>
-        <button type="button" id="rec-car-next" class="car-arrow car-arrow-right" aria-label="Scroll right">&#10095;</button>
+        <button type="button" id="car-prev" class="car-arrow car-arrow-left" aria-label="Scroll left">&#10094;</button>
+        <div class="carousel-track" id="carousel-track"></div>
+        <button type="button" id="car-next" class="car-arrow car-arrow-right" aria-label="Scroll right">&#10095;</button>
       </div>
+
+      <!-- Previous folder-album gallery grid — kept for reference, not in use.
+      <div id="gallery-state" class="gallery-state">Loading albums…</div>
+      <div id="gallery-grid" class="gallery-grid"></div>
+      -->
     </div>
   </section>
 
@@ -440,8 +415,6 @@
           <h3>Economy &amp; pride</h3><p>Cleaner public spaces enhance India's global image, improve tourism, and strengthen civic pride.</p></div>
       </div>
     </div>
-    <div class="wrap" style="margin-top:28px;" data-section-docs="Benefits"></div>
-  </div>
   </section>
 
   <!-- ================= GALLERY ================= -->
@@ -449,25 +422,32 @@
     <div class="wrap">
       <div class="section-head" data-reveal>
         <div class="eyebrow">Gallery</div>
-        <h2>Drives &amp; Campaign Photos</h2>
-        <p>Photos from clean-up drives, awareness sessions, 5S events, and field operations.</p>
+        <!-- <h2>Drives, in photos and video.</h2> -->
+        <h2>Drives </h2>
+
+        <!-- <p>Every photo from the campaign's Google Drive — root and nested folders — in one scrollable strip. Descriptions come from a matching .txt file next to each photo. Click a photo to view it full-screen.</p> -->
       </div>
-      <div id="gal-carousel-state" class="gallery-state">Loading gallery photos…</div>
+      <div id="carousel-state" class="gallery-state">Loading photos…</div>
       <div class="carousel-wrap">
-        <button type="button" id="gal-car-prev" class="car-arrow car-arrow-left" aria-label="Scroll left">&#10094;</button>
-        <div class="carousel-track" id="gal-carousel-track"></div>
-        <button type="button" id="gal-car-next" class="car-arrow car-arrow-right" aria-label="Scroll right">&#10095;</button>
+        <button type="button" id="car-prev" class="car-arrow car-arrow-left" aria-label="Scroll left">&#10094;</button>
+        <div class="carousel-track" id="carousel-track"></div>
+        <button type="button" id="car-next" class="car-arrow car-arrow-right" aria-label="Scroll right">&#10095;</button>
       </div>
+
+      <!-- Previous folder-album gallery grid — kept for reference, not in use.
+      <div id="gallery-state" class="gallery-state">Loading albums…</div>
+      <div id="gallery-grid" class="gallery-grid"></div>
+      -->
     </div>
   </section>
 
-  <!-- ================= DOCUMENTS ================= -->
-  <!-- <section id="documents">
+<!--   <!- - ================= DOCUMENTS ================= - ->
+  <section id="documents">
     <div class="wrap">
       <div class="section-head" data-reveal>
         <div class="eyebrow">Resources</div>
         <h2>Read the mission docs.</h2>
-        <p>Browse all campaign documents across sections or view them directly within their respective sections below.</p>
+        <p>Every folder on the campaign Drive — About, Appeal, Database, Website, and any nested folders inside them — becomes a folder card here. Open one to browse its documents, and click any document to read it right on the page.</p>
       </div>
       <div id="docs-state" class="gallery-state">Loading documents…</div>
       <div id="docs-grid" class="docs-grid"></div>
@@ -491,8 +471,6 @@
           <!-- <a class="btn ghost" href="mailto:dhananjay1731972@gmail.com?subject=Swachha%20Sadak%20—%20Educational%20Partnership">Request the Partnership Letter</a></div> -->
       </div>
     </div>
-    <div class="wrap" style="margin-top:28px;" data-section-docs="Appeal"></div>
-  </div>
   </section>
 <!-- ================= Pledge  ================= -->
   <section id="pledge" class="tint diag">
@@ -512,22 +490,27 @@ Dispose of all waste only in designated areas.
 </p></div>
         </div>
 
-  <div class="wrap" style="margin-top:28px;" data-section-docs="Pledge"></div>
-  </div>
-  </section>
-</main>
+  <!-- ================= PLEDGE / JOIN ================= -->
+  <section class="tint diag" id="pledge">
+<!--     <div class="wrap pledge-wrap">
+      <div class="pledge-side" data-reveal>
+        <div class="eyebrow">Pledge</div>
+        <h2>Take the pledge. Wear the badge.</h2>
+        <p>Every associate receives a Pledge Sticker, an Awareness Card, and — for active volunteers — a Swachha Sadak Badge.</p>
+        <div class="steps">
+          <div class="step"><b>1</b>Fill the form</div>
+          <div class="step"><b>2</b>Join WhatsApp group</div>
+          <div class="step"><b>3</b>Get your kit</div>
+        </div>
+        <div class="badge-row">
+          <div class="badge">PLEDGE<br>STICKER</div><div class="badge">AWARENESS<br>CARD</div><div class="badge">VOLUNTEER<br>BADGE</div>
+        </div>
+      </div> -->
 
-<a id="fab-join" class="join-trigger" href="#join-modal"><span class="pulse"></span><span class="dot"></span> Join Us</a>
-
-
-<!-- ================= JOIN MODAL ================= -->
-<div id="join-modal" role="dialog" aria-modal="true" aria-labelledby="join-modal-title">
-  <div class="join-modal-panel">
-    <button type="button" id="join-modal-close" aria-label="Close">&times;</button>
-    <div id="join">
-        <form class="signup" id="signup-form">
+      <div id="join">
+        <form class="signup" id="signup-form" data-reveal>
           <div id="form-fields">
-            <div class="eyebrow" id="join-modal-title" style="margin-bottom:20px;">Associate Sign-Up</div>
+            <div class="eyebrow" style="margin-bottom:20px;">Associate Sign-Up</div>
             <div class="field"><label for="f-name">Business/Organization full name — OR individual name</label>
               <input id="f-name" name="orgOrName" required placeholder="e.g. Sigma Consultants, or Asha Patil"></div>
             <div class="field"><label for="f-address">Address</label>
@@ -565,8 +548,11 @@ Dispose of all waste only in designated areas.
           </div>
         </form>
       </div>
-  </div>
-</div>
+    </div>
+  </section>
+</main>
+
+<a id="fab-join" href="#join"><span class="pulse"></span><span class="dot"></span> Join Us</a>
 
 <div id="photo-viewer" role="dialog" aria-modal="true">
   <button type="button" id="pv-close" aria-label="Close">&times;</button>
@@ -580,13 +566,7 @@ Dispose of all waste only in designated areas.
 
 <div id="doc-viewer" role="dialog" aria-modal="true">
   <div class="dv-panel">
-    <div class="dv-head">
-      <span id="dv-title"></span>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <a id="dv-download" class="btn" style="padding:6px 14px; font-size:11px;" href="" target="_blank" rel="noopener">⬇ Download</a>
-        <button type="button" id="dv-close" aria-label="Close">&times;</button>
-      </div>
-    </div>
+    <div class="dv-head"><span id="dv-title"></span><button type="button" id="dv-close" aria-label="Close">&times;</button></div>
     <iframe id="dv-frame" src="" title="Document preview" allow="autoplay"></iframe>
   </div>
 </div>
@@ -621,7 +601,7 @@ Dispose of all waste only in designated areas.
       <div><h4>Sections</h4><nav>
         <p><a href="#about">About — Goal, Mission &amp; Tasks</a></p>
         <p style="margin-top:8px;"><a href="#gallery">Gallery — Photos &amp; Videos</a></p>
-        <p style="margin-top:8px;"><a href="#documents">Docs — Mission Resources</a></p>
+        <!-- <p style="margin-top:8px;"><a href="#documents">Docs — Mission Resources</a></p> -->
         <p style="margin-top:8px;"><a href="#appeal">Appeal — Partner With Us</a></p>
         <p style="margin-top:8px;"><a href="#pledge">Pledge — Sticker, Card, Badge</a></p>
       </nav></div>
@@ -637,7 +617,7 @@ Dispose of all waste only in designated areas.
 </footer>
 
 <script>
-const CONFIG = { DRIVE_API_KEY:'AIzaSyDI6UBuJpo9QIuBi5O2XmgvtV6iL5P0-c8', GALLERY_FOLDER_ID:'1hqEunaltlz4l4qoFIWzXA4jqRbU9Xz6M', RECOGNITION_FOLDER_ID:'1hqEunaltlz4l4qoFIWzXA4jqRbU9Xz6M', FORM_ENDPOINT:'https://script.google.com/macros/s/AKfycbyqaGguZ8ntdNfUQz1IDvL0lg303Xp5sRtIKOGGv4Rb6eFbneNPC2N1BWNlJpJDyEcz/exec' };
+const CONFIG = { DRIVE_API_KEY:'AIzaSyDI6UBuJpo9QIuBi5O2XmgvtV6iL5P0-c8', GALLERY_FOLDER_ID:'1hqEunaltlz4l4qoFIWzXA4jqRbU9Xz6M', FORM_ENDPOINT:'https://script.google.com/macros/s/AKfycbyqaGguZ8ntdNfUQz1IDvL0lg303Xp5sRtIKOGGv4Rb6eFbneNPC2N1BWNlJpJDyEcz/exec' };
 const DOCS_ROOT_ID = '1ILPw1ejDbzOYA7bHYU8JY88W8gEIxMi3'; // campaign Drive root — documents are discovered recursively from here
 const WA_LINK = 'https://chat.whatsapp.com/HeVz3s5FB8UFUo5JkeLGk6';
 
@@ -774,104 +754,95 @@ document.getElementById('lb-prev').addEventListener('click', () => showImage(lbI
 document.getElementById('lb-next').addEventListener('click', () => showImage(lbIndex + 1));
 END PREVIOUS GALLERY CODE */
 
-/* ---------------------------- PHOTO CAROUSELS (Recognitions & Gallery) ---------------------------- */
-let allViewerImages = [];
+/* ---------------------------- PHOTO CAROUSEL (current gallery) ---------------------------- */
+let carouselImages = [];
 let pvIndex = 0;
 
 function baseName(name){ return name.replace(/\.[^.]+$/, '').trim().toLowerCase(); }
 
-async function fetchFolderPhotos(folderId){
-  if(!CONFIG.DRIVE_API_KEY || !folderId) return [];
-  const queue = [folderId];
-  const visited = new Set();
-  let images = [];
-  let texts = [];
-  let guard = 0;
-
-  while(queue.length && guard < 80){
-    guard++;
-    const currentFolderId = queue.shift();
-    if(visited.has(currentFolderId)) continue;
-    visited.add(currentFolderId);
-
-    const q = encodeURIComponent(`'${currentFolderId}' in parents and trashed=false`);
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType,thumbnailLink)&pageSize=200&key=${CONFIG.DRIVE_API_KEY}`);
-    const children = (await res.json()).files || [];
-
-    children.forEach(c => {
-      if(c.mimeType === 'application/vnd.google-apps.folder'){ queue.push(c.id); }
-      else if(c.mimeType.startsWith('image/')){ images.push({ ...c, parentId: currentFolderId }); }
-      else if(c.mimeType === 'text/plain'){ texts.push({ ...c, parentId: currentFolderId }); }
-    });
-  }
-
-  const textByKey = {};
-  texts.forEach(t => { textByKey[t.parentId + '::' + baseName(t.name)] = t; });
-
-  return await Promise.all(images.map(async (img) => {
-    const match = textByKey[img.parentId + '::' + baseName(img.name)];
-    let description = '';
-    if(match){
-      try{
-        const r = await fetch(`https://www.googleapis.com/drive/v3/files/${match.id}?alt=media&key=${CONFIG.DRIVE_API_KEY}`);
-        description = (await r.text()).trim();
-      }catch(e){ /* no description */ }
-    }
-    return { ...img, description };
-  }));
-}
-
-async function initPhotoCarousel(folderId, stateElId, trackElId, prevBtnId, nextBtnId, labelName){
-  const stateEl = document.getElementById(stateElId);
-  const track = document.getElementById(trackElId);
-  const prevBtn = document.getElementById(prevBtnId);
-  const nextBtn = document.getElementById(nextBtnId);
-
-  if(!stateEl || !track) return;
+async function loadPhotoCarousel(){
+  const stateEl = document.getElementById('carousel-state');
+  const track = document.getElementById('carousel-track');
 
   if(!CONFIG.DRIVE_API_KEY){
     stateEl.innerHTML = '';
-    track.innerHTML = `<div class="gallery-empty-banner">${labelName} isn't connected yet — add a Drive API key in CONFIG.</div>`;
+    track.innerHTML = `<div class="gallery-empty-banner">Gallery isn't connected yet — add a Drive API key in CONFIG.</div>`;
     return;
   }
 
   try{
-    stateEl.textContent = `Loading ${labelName.toLowerCase()} photos…`;
-    const photoList = await fetchFolderPhotos(folderId);
+    // Recursively walk the Gallery folder tree (root + every nested folder),
+    // collecting every photo and every .txt description file along the way.
+    const queue = [CONFIG.GALLERY_FOLDER_ID];
+    const visited = new Set();
+    let images = [];
+    let texts = [];
+    let guard = 0;
 
-    if(photoList.length === 0){
+    while(queue.length && guard < 80){
+      guard++;
+      const folderId = queue.shift();
+      if(visited.has(folderId)) continue;
+      visited.add(folderId);
+
+      const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType,thumbnailLink)&pageSize=200&key=${CONFIG.DRIVE_API_KEY}`);
+      const children = (await res.json()).files || [];
+
+      children.forEach(c => {
+        if(c.mimeType === 'application/vnd.google-apps.folder'){ queue.push(c.id); }
+        else if(c.mimeType.startsWith('image/')){ images.push({ ...c, parentId: folderId }); }
+        else if(c.mimeType === 'text/plain'){ texts.push({ ...c, parentId: folderId }); }
+      });
+    }
+
+    if(images.length === 0){
       stateEl.innerHTML = '';
-      track.innerHTML = `<div class="gallery-empty-banner">No photos yet — once images are uploaded inside the ${labelName} Google Drive folder, they'll show up here automatically.</div>`;
+      track.innerHTML = `<div class="gallery-empty-banner">No photos yet — once images are uploaded anywhere inside the Gallery folder, they'll show up here automatically.</div>`;
       return;
     }
 
-    stateEl.textContent = `${photoList.length} photo${photoList.length===1?'':'s'} connected live from Google Drive`;
-    track.innerHTML = '';
+    // Match each photo to a same-name .txt description file in the same folder.
+    const textByKey = {};
+    texts.forEach(t => { textByKey[t.parentId + '::' + baseName(t.name)] = t; });
 
-    const startIndex = allViewerImages.length;
-    photoList.forEach((file, i) => {
-      allViewerImages.push(file);
-      const globalIdx = startIndex + i;
+    stateEl.textContent = `Loading descriptions for ${images.length} photo${images.length===1?'':'s'}…`;
+
+    carouselImages = await Promise.all(images.map(async (img) => {
+      const match = textByKey[img.parentId + '::' + baseName(img.name)];
+      let description = '';
+      if(match){
+        try{
+          const r = await fetch(`https://www.googleapis.com/drive/v3/files/${match.id}?alt=media&key=${CONFIG.DRIVE_API_KEY}`);
+          description = (await r.text()).trim();
+        }catch(e){ /* no description available */ }
+      }
+      return { ...img, description };
+    }));
+
+    stateEl.textContent = `${carouselImages.length} photo${carouselImages.length===1?'':'s'} connected live from Google Drive`;
+    track.innerHTML = '';
+    carouselImages.forEach((file, i) => {
       const slide = document.createElement('button');
       slide.type = 'button'; slide.className = 'car-slide';
       slide.innerHTML = `<img src="${file.thumbnailLink.replace('=s220','=s600')}" alt="${file.name || ''}" loading="lazy">
         <div class="car-caption">${file.description || file.name}</div>`;
-      slide.addEventListener('click', () => openPhotoViewer(globalIdx));
+      slide.addEventListener('click', () => openPhotoViewer(i));
       track.appendChild(slide);
     });
-
-    if(prevBtn) prevBtn.addEventListener('click', () => track.scrollBy({ left: -300, behavior: 'smooth' }));
-    if(nextBtn) nextBtn.addEventListener('click', () => track.scrollBy({ left: 300, behavior: 'smooth' }));
-
   }catch(err){
-    stateEl.textContent = `Could not load ${labelName.toLowerCase()} — check the Drive API key and folder sharing settings.`;
+    stateEl.textContent = 'Could not load the gallery — check the Drive API key and folder sharing settings.';
     console.error(err);
   }
 }
+loadPhotoCarousel();
 
-// Initialize Recognitions and Gallery carousels with their respective folder IDs
-initPhotoCarousel(CONFIG.RECOGNITION_FOLDER_ID, 'rec-carousel-state', 'rec-carousel-track', 'rec-car-prev', 'rec-car-next', 'Recognitions');
-initPhotoCarousel(CONFIG.GALLERY_FOLDER_ID, 'gal-carousel-state', 'gal-carousel-track', 'gal-car-prev', 'gal-car-next', 'Gallery');
+document.getElementById('car-prev').addEventListener('click', () => {
+  document.getElementById('carousel-track').scrollBy({ left: -300, behavior: 'smooth' });
+});
+document.getElementById('car-next').addEventListener('click', () => {
+  document.getElementById('carousel-track').scrollBy({ left: 300, behavior: 'smooth' });
+});
 
 /* full-screen photo viewer */
 function openPhotoViewer(i){
@@ -880,12 +851,12 @@ function openPhotoViewer(i){
   showCarouselImage(i);
 }
 function showCarouselImage(i){
-  if(allViewerImages.length === 0) return;
-  pvIndex = (i + allViewerImages.length) % allViewerImages.length;
-  const file = allViewerImages[pvIndex];
+  if(carouselImages.length === 0) return;
+  pvIndex = (i + carouselImages.length) % carouselImages.length;
+  const file = carouselImages[pvIndex];
   document.getElementById('pv-img').src = file.thumbnailLink.replace('=s220','=s1600');
   const desc = file.description ? file.description + ' — ' : '';
-  document.getElementById('pv-caption').textContent = `${desc}${pvIndex+1} of ${allViewerImages.length}`;
+  document.getElementById('pv-caption').textContent = `${desc}${pvIndex+1} of ${carouselImages.length}`;
 }
 function closePhotoViewer(){
   document.getElementById('photo-viewer').classList.remove('open');
@@ -917,11 +888,15 @@ function docLabel(kind){
 async function loadDocuments(){
   const stateEl = document.getElementById('docs-state'), gridEl = document.getElementById('docs-grid');
   if(!CONFIG.DRIVE_API_KEY){
-    if(stateEl) stateEl.innerHTML = '';
-    if(gridEl) gridEl.innerHTML = `<div class="gallery-empty-banner">Documents aren't connected yet — add a Drive API key in CONFIG.</div>`;
+    stateEl.innerHTML = '';
+    gridEl.innerHTML = `<div class="gallery-empty-banner">Documents aren't connected yet — add a Drive API key in CONFIG.</div>`;
     return;
   }
   try{
+    // Recursively walk every folder under both the Docs root AND the Gallery root,
+    // grouping non-image documents by the folder they live in — folder name becomes
+    // the album name. This also catches document files placed inside Gallery albums,
+    // which the photo Gallery itself skips over.
     const albums = [];
     const queue = [
       { id: DOCS_ROOT_ID, name: 'General' },
@@ -948,48 +923,24 @@ async function loadDocuments(){
     }
 
     if(albums.length === 0){
-      if(stateEl) stateEl.innerHTML = '';
-      if(gridEl) gridEl.innerHTML = `<div class="gallery-empty-banner">No documents found yet.</div>`;
+      stateEl.innerHTML = '';
+      gridEl.innerHTML = `<div class="gallery-empty-banner">No documents found yet.</div>`;
       return;
     }
     const totalFiles = albums.reduce((n,a) => n + a.files.length, 0);
-    if(stateEl) stateEl.textContent = `${albums.length} folder${albums.length===1?'':'s'} · ${totalFiles} document${totalFiles===1?'':'s'} connected live from Google Drive`;
-    if(gridEl){
-      gridEl.innerHTML = '';
-      albums.forEach((album, i) => {
-        const card = document.createElement('button');
-        card.type = 'button'; card.className = 'doc-album'; card.style.transitionDelay = (i*70)+'ms';
-        card.innerHTML = `<svg class="folder-icon" viewBox="0 0 24 24" fill="none"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-          <h4>${album.name}</h4>
-          <span>${album.files.length} document${album.files.length===1?'':'s'}</span>`;
-        card.addEventListener('click', () => openDocAlbum(album.name, album.files));
-        gridEl.appendChild(card);
-        requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('shown')));
-      });
-    }
-
-    // Populate section-specific document folders
-    document.querySelectorAll('[data-section-docs]').forEach(secEl => {
-      const secName = secEl.getAttribute('data-section-docs').toLowerCase();
-      const matchedAlbum = albums.find(a => a.name.toLowerCase() === secName || a.name.toLowerCase().includes(secName));
-      if(matchedAlbum){
-        secEl.innerHTML = `
-          <div style="border-top: 1px dashed var(--line); padding-top: 20px; margin-top: 20px;">
-            <div class="eyebrow" style="margin-bottom:10px;">Section Documents</div>
-            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
-              <button type="button" class="doc-album shown" style="display:inline-flex; align-items:center; gap:12px; padding:12px 18px; margin:0;" onclick='openDocAlbum("${matchedAlbum.name.replace(/'/g, "\'")}", ${JSON.stringify(matchedAlbum.files).replace(/'/g, "&apos;")})'>
-                <svg class="folder-icon" style="width:24px; height:24px; margin:0;" viewBox="0 0 24 24" fill="none"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                <div style="text-align:left;">
-                  <h4 style="font-size:14.5px; margin:0;">${matchedAlbum.name} Folder</h4>
-                  <span style="font-size:11px;">${matchedAlbum.files.length} File${matchedAlbum.files.length===1?'':'s'} (Click to Preview)</span>
-                </div>
-              </button>
-            </div>
-          </div>`;
-      }
+    stateEl.textContent = `${albums.length} folder${albums.length===1?'':'s'} · ${totalFiles} document${totalFiles===1?'':'s'} connected live from Google Drive`;
+    gridEl.innerHTML = '';
+    albums.forEach((album, i) => {
+      const card = document.createElement('button');
+      card.type = 'button'; card.className = 'doc-album'; card.style.transitionDelay = (i*70)+'ms';
+      card.innerHTML = `<svg class="folder-icon" viewBox="0 0 24 24" fill="none"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <h4>${album.name}</h4>
+        <span>${album.files.length} document${album.files.length===1?'':'s'}</span>`;
+      card.addEventListener('click', () => openDocAlbum(album.name, album.files));
+      gridEl.appendChild(card);
+      requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('shown')));
     });
-
-  }catch(err){ if(stateEl) stateEl.textContent = 'Could not load documents — check the Drive API key and folder sharing settings.'; console.error(err); }
+  }catch(err){ stateEl.textContent = 'Could not load documents — check the Drive API key and folder sharing settings.'; console.error(err); }
 }
 loadDocuments();
 
@@ -1020,10 +971,6 @@ function openDocAlbum(albumName, files){
 function openDocument(fileId, name){
   document.getElementById('dv-title').textContent = name;
   document.getElementById('dv-frame').src = `https://drive.google.com/file/d/${fileId}/preview`;
-  const dlBtn = document.getElementById('dv-download');
-  if(dlBtn){
-    dlBtn.href = `https://drive.google.com/uc?export=download&id=${fileId}`;
-  }
   document.getElementById('doc-viewer').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1092,36 +1039,6 @@ function renderStakeholders(){
   window.addEventListener('resize', () => moveIndicator(document.querySelector('.stake-tab.active')));
 }
 renderStakeholders();
-
-
-/* join modal */
-const joinModal = document.getElementById('join-modal');
-const joinModalClose = document.getElementById('join-modal-close');
-const joinTriggers = document.querySelectorAll('.join-trigger');
-
-function openJoinModal(){
-  joinModal.classList.add('open');
-  document.body.classList.add('join-modal-open');
-  setTimeout(() => {
-    const firstField = joinModal.querySelector('input, textarea, select, button');
-    if(firstField) firstField.focus();
-  }, 50);
-}
-function closeJoinModal(){
-  joinModal.classList.remove('open');
-  document.body.classList.remove('join-modal-open');
-}
-joinTriggers.forEach(btn => btn.addEventListener('click', (e) => {
-  e.preventDefault();
-  openJoinModal();
-}));
-joinModalClose.addEventListener('click', closeJoinModal);
-joinModal.addEventListener('click', (e) => {
-  if(e.target === joinModal) closeJoinModal();
-});
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape' && joinModal.classList.contains('open')) closeJoinModal();
-});
 
 /* form */
 document.getElementById('signup-form').addEventListener('submit', async (e) => {

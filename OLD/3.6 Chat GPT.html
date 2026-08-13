@@ -184,6 +184,36 @@
   .form-msg{ font-family:var(--mono); font-size:13px; margin-top:14px; display:none; align-items:center; gap:8px; }
   .form-msg.show{ display:flex; } .form-msg.warn{ color:#a13; }
 
+
+  /* ---------------- join modal ---------------- */
+  #join-modal{
+    position:fixed; inset:0; z-index:400;
+    display:none; align-items:center; justify-content:center;
+    padding:24px; background:rgba(11,18,16,.72);
+    backdrop-filter:blur(5px);
+  }
+  #join-modal.open{ display:flex; animation:lb-fade .25s ease; }
+  #join-modal .join-modal-panel{
+    position:relative; width:min(760px,100%); max-height:92vh;
+    overflow-y:auto; background:var(--paper);
+    border-radius:var(--radius);
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.55);
+    padding:20px;
+  }
+  #join-modal .signup{ margin:0; }
+  #join-modal-close{
+    position:sticky; top:0; z-index:2; float:right;
+    width:42px; height:42px; border:1px solid var(--line);
+    border-radius:50%; background:var(--surface); color:var(--navy);
+    font-size:26px; line-height:1; cursor:pointer;
+  }
+  #join-modal-close:hover{ background:var(--navy); color:#fff; }
+  body.join-modal-open{ overflow:hidden; }
+  @media (max-width:640px){
+    #join-modal{ padding:10px; align-items:flex-start; }
+    #join-modal .join-modal-panel{ max-height:96vh; padding:14px; margin-top:10px; }
+  }
+
   /* floating join button */
   #fab-join{ position:fixed; right:22px; bottom:26px; z-index:150; display:flex; align-items:center; gap:10px;
     padding:14px 20px 14px 16px; border-radius:40px; background:var(--navy); color:#fff; text-decoration:none;
@@ -316,7 +346,7 @@
     <nav class="links">
       <a href="#about">About</a><a href="#gallery">Gallery</a><!-- <a href="#documents">Docs</a> --><a href="#appeal">Appeal</a><a href="#pledge">Pledge</a>
     </nav>
-    <a class="btn ghost" href="#join" style="padding:9px 16px;">Join the Mission</a>
+    <a class="btn ghost join-trigger" href="#join-modal" style="padding:9px 16px;">Join the Mission</a>
   </div>
 </header>
 
@@ -330,7 +360,7 @@
         <img class="hero-logo-img" src="bl.png" alt="Swachha Sadak — स्वच्छ सड़क अभियान">
         <p class="lede">A Clean Road is the ultimate reflection of a disciplined, progressive nation. We're building citizen-led systems — not just awareness — to end littering on India's public roads.</p>
         <div class="hero-ctas">
-         <!--  <a href="#join" class="btn">Become an Associate</a>
+         <!--  <a href="#join-modal" class="btn join-trigger">Become an Associate</a>
           <a href="#appeal" class="btn ghost">Partner With Us</a> -->
         </div>
       <!--   <div class="hero-stats">
@@ -490,27 +520,19 @@ Dispose of all waste only in designated areas.
 </p></div>
         </div>
 
-  <!-- ================= PLEDGE / JOIN ================= -->
-  <section class="tint diag" id="pledge">
-<!--     <div class="wrap pledge-wrap">
-      <div class="pledge-side" data-reveal>
-        <div class="eyebrow">Pledge</div>
-        <h2>Take the pledge. Wear the badge.</h2>
-        <p>Every associate receives a Pledge Sticker, an Awareness Card, and — for active volunteers — a Swachha Sadak Badge.</p>
-        <div class="steps">
-          <div class="step"><b>1</b>Fill the form</div>
-          <div class="step"><b>2</b>Join WhatsApp group</div>
-          <div class="step"><b>3</b>Get your kit</div>
-        </div>
-        <div class="badge-row">
-          <div class="badge">PLEDGE<br>STICKER</div><div class="badge">AWARENESS<br>CARD</div><div class="badge">VOLUNTEER<br>BADGE</div>
-        </div>
-      </div> -->
+</main>
 
-      <div id="join">
-        <form class="signup" id="signup-form" data-reveal>
+<a id="fab-join" class="join-trigger" href="#join-modal"><span class="pulse"></span><span class="dot"></span> Join Us</a>
+
+
+<!-- ================= JOIN MODAL ================= -->
+<div id="join-modal" role="dialog" aria-modal="true" aria-labelledby="join-modal-title">
+  <div class="join-modal-panel">
+    <button type="button" id="join-modal-close" aria-label="Close">&times;</button>
+    <div id="join">
+        <form class="signup" id="signup-form">
           <div id="form-fields">
-            <div class="eyebrow" style="margin-bottom:20px;">Associate Sign-Up</div>
+            <div class="eyebrow" id="join-modal-title" style="margin-bottom:20px;">Associate Sign-Up</div>
             <div class="field"><label for="f-name">Business/Organization full name — OR individual name</label>
               <input id="f-name" name="orgOrName" required placeholder="e.g. Sigma Consultants, or Asha Patil"></div>
             <div class="field"><label for="f-address">Address</label>
@@ -548,11 +570,8 @@ Dispose of all waste only in designated areas.
           </div>
         </form>
       </div>
-    </div>
-  </section>
-</main>
-
-<a id="fab-join" href="#join"><span class="pulse"></span><span class="dot"></span> Join Us</a>
+  </div>
+</div>
 
 <div id="photo-viewer" role="dialog" aria-modal="true">
   <button type="button" id="pv-close" aria-label="Close">&times;</button>
@@ -607,11 +626,10 @@ Dispose of all waste only in designated areas.
       </nav></div>
       <!-- <div><h4>Join on WhatsApp</h4>
         <div class="qr-block">
-          <div class="qr-box"><svg viewBox="0 0 100 100" width="100%" height="100%"><rect width="100" height="100" fill="#fff"/><g fill="#0B2A4A"><rect x="8" y="8" width="24" height="24"/><rect x="14" y="14" width="12" height="12" fill="#fff"/><rect x="68" y="8" width="24" height="24"/><rect x="74" y="14" width="12" height="12" fill="#fff"/><rect x="8" y="68" width="24" height="24"/><rect x="14" y="74" width="12" height="12" fill="#fff"/><rect x="40" y="8" width="6" height="6"/><rect x="52" y="14" width="6" height="6"/><rect x="40" y="26" width="6" height="6"/><rect x="60" y="40" width="6" height="6"/><rect x="40" y="46" width="18" height="6"/><rect x="72" y="46" width="6" height="18"/><rect x="86" y="40" width="6" height="6"/><rect x="46" y="60" width="6" height="18"/><rect x="60" y="66" width="12" height="6"/><rect x="80" y="60" width="12" height="12"/><rect x="46" y="86" width="12" height="6"/></g></svg></div> -->
-         <!--  <div><p><a href="https://chat.whatsapp.com/HeVz3s5FB8UFUo5JkeLGk6" target="_blank" rel="noopener">Join the WhatsApp group →</a></p>
-          <p style="color:rgba(245,248,246,.5); font-size:13px; margin-top:4px;">or contact +91 98231 90939</p></div>
-        </div> -->
-      </div>
+          <div class="qr-box"><svg viewBox="0 0 100 100" width="100%" height="100%"><rect width="100" height="100" fill="#fff"/><g fill="#0B2A4A"><rect x="8" y="8" width="24" height="24"/><rect x="14" y="14" width="12" height="12" fill="#fff"/><rect x="68" y="8" width="24" height="24"/><rect x="74" y="14" width="12" height="12" fill="#fff"/><rect x="8" y="68" width="24" height="24"/><rect x="14" y="74" width="12" height="12" fill="#fff"/><rect x="40" y="8" width="6" height="6"/><rect x="52" y="14" width="6" height="6"/><rect x="40" y="26" width="6" height="6"/><rect x="60" y="40" width="6" height="6"/><rect x="40" y="46" width="18" height="6"/><rect x="72" y="46" width="6" height="18"/><rect x="86" y="40" width="6" height="6"/><rect x="46" y="60" width="6" height="18"/><rect x="60" y="66" width="12" height="6"/><rect x="80" y="60" width="12" height="12"/><rect x="46" y="86" width="12" height="6"/></g></svg></div>
+         <div><p><a href="https://chat.whatsapp.com/HeVz3s5FB8UFUo5JkeLGk6" target="_blank" rel="noopener">Join the WhatsApp group →</a></p><p style="color:rgba(245,248,246,.5); font-size:13px; margin-top:4px;">or contact +91 98231 90939</p></div>
+        </div>
+      </div> -->
     </div>
     <div class="foot-bottom"><span>© 2026 Sigma Consultants — Swachha Sadak Mission</span><span>Quality Management · Lean · Six Sigma · Operational Excellence</span></div>
   </div>
@@ -1040,6 +1058,36 @@ function renderStakeholders(){
   window.addEventListener('resize', () => moveIndicator(document.querySelector('.stake-tab.active')));
 }
 renderStakeholders();
+
+
+/* join modal */
+const joinModal = document.getElementById('join-modal');
+const joinModalClose = document.getElementById('join-modal-close');
+const joinTriggers = document.querySelectorAll('.join-trigger');
+
+function openJoinModal(){
+  joinModal.classList.add('open');
+  document.body.classList.add('join-modal-open');
+  setTimeout(() => {
+    const firstField = joinModal.querySelector('input, textarea, select, button');
+    if(firstField) firstField.focus();
+  }, 50);
+}
+function closeJoinModal(){
+  joinModal.classList.remove('open');
+  document.body.classList.remove('join-modal-open');
+}
+joinTriggers.forEach(btn => btn.addEventListener('click', (e) => {
+  e.preventDefault();
+  openJoinModal();
+}));
+joinModalClose.addEventListener('click', closeJoinModal);
+joinModal.addEventListener('click', (e) => {
+  if(e.target === joinModal) closeJoinModal();
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && joinModal.classList.contains('open')) closeJoinModal();
+});
 
 /* form */
 document.getElementById('signup-form').addEventListener('submit', async (e) => {
