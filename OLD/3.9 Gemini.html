@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Swachha Sadak — स्वच्छ सड़क अभियान (3.13 Gemini)</title>
+<title>Swachha Sadak — स्वच्छ सड़क अभियान (3.10 Gemini)</title>
 <link rel="icon" type="image/png" href="sl.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
@@ -59,16 +59,7 @@
   nav.links a{ position:relative; text-decoration:none; padding-bottom:3px; }
   nav.links a::after{ content:""; position:absolute; left:0; right:100%; bottom:0; height:2px; background:var(--green-bright); transition:right .25s var(--ease); }
   nav.links a:hover::after{ right:0; }
-    .mobile-menu-btn { display:none; background:none; border:none; cursor:pointer; color:var(--navy); padding:6px; margin-left:10px; }
-  .mobile-menu-btn svg { width:26px; height:26px; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
-  @media (max-width:820px){
-    .mobile-menu-btn { display:block; }
-    nav.links { display:none; position:absolute; top:100%; left:0; right:0; background:rgba(246,249,247,.98); backdrop-filter:blur(12px); flex-direction:column; padding:24px 28px; gap:20px; border-bottom:1px solid var(--line); box-shadow:0 20px 40px -20px rgba(11,42,74,.3); z-index:100; text-align:center; }
-    nav.links a::after { display:none; } /* remove underline hover on mobile */
-    nav.links.open { display:flex; animation:slide-down .3s var(--ease); }
-    @keyframes slide-down { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
-    .navbar .btn.ghost { padding: 8px 12px; font-size: 11px; } /* make join button slightly smaller on mobile to fit */
-  }
+  @media (max-width:820px){ nav.links{ display:none; } }
 
   /* ---------------- hero split ---------------- */
   .hero{ padding:64px 0 40px; position:relative; overflow:hidden; }
@@ -355,12 +346,7 @@
     <nav class="links">
       <a href="#about">About</a><!-- <a href="#recognition">Recognitions</a> --><a href="#gallery">Gallery</a><!-- <a href="#documents">Docs</a> --><a href="#appeal">Appeal</a><a href="#pledge">Pledge</a>
     </nav>
-    <div style="display:flex; align-items:center;">
-      <a class="btn ghost join-trigger" href="#join-modal" style="padding:9px 16px;">Join the Mission</a>
-      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Menu">
-        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-    </div>
+    <a class="btn ghost join-trigger" href="#join-modal" style="padding:9px 16px;">Join the Mission</a>
   </div>
 </header>
 
@@ -651,17 +637,9 @@ Dispose of all waste only in designated areas.
 </footer>
 
 <script>
-const CONFIG = { DRIVE_API_KEY:'AIzaSyDI6UBuJpo9QIuBi5O2XmgvtV6iL5P0-c8', GALLERY_FOLDER_ID:'1hqEunaltlz4l4qoFIWzXA4jqRbU9Xz6M', RECOGNITION_FOLDER_ID:'1MuURVn9J85x50ish7OXUmhMQN2HCPiH2', FORM_ENDPOINT:'https://script.google.com/macros/s/AKfycbyqaGguZ8ntdNfUQz1IDvL0lg303Xp5sRtIKOGGv4Rb6eFbneNPC2N1BWNlJpJDyEcz/exec' };
+const CONFIG = { DRIVE_API_KEY:'AIzaSyDI6UBuJpo9QIuBi5O2XmgvtV6iL5P0-c8', GALLERY_FOLDER_ID:'1hqEunaltlz4l4qoFIWzXA4jqRbU9Xz6M', RECOGNITION_FOLDER_ID:'1ZWDGJ8RraQy8LttICaJg3Lqp6vkkKn0G', FORM_ENDPOINT:'https://script.google.com/macros/s/AKfycbyqaGguZ8ntdNfUQz1IDvL0lg303Xp5sRtIKOGGv4Rb6eFbneNPC2N1BWNlJpJDyEcz/exec' };
 const DOCS_ROOT_ID = '1ILPw1ejDbzOYA7bHYU8JY88W8gEIxMi3'; // campaign Drive root — documents are discovered recursively from here
 const WA_LINK = 'https://chat.whatsapp.com/HeVz3s5FB8UFUo5JkeLGk6';
-
-/* mobile menu */
-const mobileBtn = document.getElementById('mobile-menu-btn');
-const navLinks = document.querySelector('nav.links');
-if(mobileBtn && navLinks){
-  mobileBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
-  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
-}
 
 /* scroll progress road */
 const fillEl = document.querySelector('#route-progress .fill');
@@ -676,7 +654,7 @@ updateProgress();
 
 /* floating join button visibility */
 const fab = document.getElementById('fab-join');
-const heroEl = document.querySelector('.hero');
+const heroEl =querySelector('.hero');
 const fabObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => fab.classList.toggle('visible', !e.isIntersecting));
 }, { threshold:0 });
@@ -696,105 +674,6 @@ function animateCount(el){
   requestAnimationFrame(tick);
 }
 document.querySelectorAll('.count').forEach(animateCount);
-
-/* gallery — PREVIOUS folder-album version, replaced by the horizontal photo
-   carousel below. Left here (commented out) for reference / easy revert.
-async function loadGallery(){
-  const stateEl = document.getElementById('gallery-state'), gridEl = document.getElementById('gallery-grid');
-  if(!CONFIG.DRIVE_API_KEY){
-    stateEl.innerHTML = '';
-    gridEl.innerHTML = `<div class="gallery-empty-banner"><b>Gallery isn't connected yet</b>Add a Drive API key in CONFIG at the bottom of this file, then each folder inside <span style="font-family:var(--mono)">GALLERY/</span> will appear here automatically.</div>`;
-    return;
-  }
-  try{
-    const folderQ = encodeURIComponent(`'${CONFIG.GALLERY_FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
-    const folderRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${folderQ}&fields=files(id,name)&key=${CONFIG.DRIVE_API_KEY}`);
-    const albums = (await folderRes.json()).files || [];
-    if(albums.length === 0){
-      stateEl.innerHTML = '';
-      gridEl.innerHTML = `<div class="gallery-empty-banner"><b>No albums yet</b>Once photos are uploaded into folders inside GALLERY/, they'll show up here automatically.</div>`;
-      return;
-    }
-    stateEl.textContent = `${albums.length} album${albums.length===1?'':'s'} connected live from Google Drive`;
-    gridEl.innerHTML = '';
-    albums.forEach((album,i) => {
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = 'album'; card.style.transitionDelay = (i*70)+'ms';
-      card.innerHTML = `<div class="tag">${album.name}</div>`;
-      card.addEventListener('click', () => openAlbum(album.id, album.name));
-      gridEl.appendChild(card);
-      requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('shown')));
-      const imgQ = encodeURIComponent(`'${album.id}' in parents and mimeType contains 'image/' and trashed=false`);
-      fetch(`https://www.googleapis.com/drive/v3/files?q=${imgQ}&fields=files(id,thumbnailLink)&pageSize=1&key=${CONFIG.DRIVE_API_KEY}`)
-        .then(r=>r.json()).then(d=>{
-          const file=(d.files||[])[0];
-          if(file && file.thumbnailLink){ const img=document.createElement('img'); img.src=file.thumbnailLink.replace('=s220','=s600'); img.alt=album.name; card.prepend(img); }
-          else{ card.classList.add('empty'); card.innerHTML = `<span>${album.name}<br><span style="opacity:.6">no photos yet</span></span>`; }
-        }).catch(()=>{ card.classList.add('empty'); card.textContent = album.name; });
-    });
-  }catch(err){ stateEl.textContent = 'Could not load the gallery — check the Drive API key and folder sharing settings.'; console.error(err); }
-}
-loadGallery();
-
-async function openAlbum(albumId, albumName){
-  const overlay = document.getElementById('lightbox');
-  const titleEl = document.getElementById('lb-title');
-  const gridEl = document.getElementById('lb-grid');
-  const viewerEl = document.getElementById('lb-viewer');
-
-  titleEl.textContent = albumName;
-  gridEl.innerHTML = '<div class="lb-loading">Loading photos…</div>';
-  viewerEl.classList.remove('active');
-  gridEl.classList.remove('docs-mode');
-  gridEl.classList.add('active');
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  try{
-    const imgQ = encodeURIComponent(`'${albumId}' in parents and mimeType contains 'image/' and trashed=false`);
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${imgQ}&fields=files(id,name,thumbnailLink)&pageSize=200&key=${CONFIG.DRIVE_API_KEY}`);
-    const files = (await res.json()).files || [];
-    lbImages = files;
-
-    if(files.length === 0){
-      gridEl.innerHTML = '<div class="lb-loading">No photos in this album yet.</div>';
-      return;
-    }
-    gridEl.innerHTML = '';
-    files.forEach((file, i) => {
-      const thumb = document.createElement('button');
-      thumb.type = 'button'; thumb.className = 'lb-thumb';
-      thumb.innerHTML = `<img src="${file.thumbnailLink.replace('=s220','=s400')}" alt="${file.name || ''}" loading="lazy">`;
-      thumb.addEventListener('click', () => showImage(i));
-      gridEl.appendChild(thumb);
-    });
-  }catch(err){
-    gridEl.innerHTML = '<div class="lb-loading">Could not load photos — check the Drive API key and sharing settings.</div>';
-    console.error(err);
-  }
-}
-
-function showImage(i){
-  if(lbImages.length === 0) return;
-  lbIndex = (i + lbImages.length) % lbImages.length;
-  const file = lbImages[lbIndex];
-  document.getElementById('lb-viewer-img').src = file.thumbnailLink.replace('=s220','=s1600');
-  document.getElementById('lb-viewer-caption').textContent = `${file.name || ''} — ${lbIndex+1} of ${lbImages.length}`;
-  document.getElementById('lb-grid').classList.remove('active');
-  document.getElementById('lb-viewer').classList.add('active');
-}
-
-function closeViewer(){
-  document.getElementById('lb-viewer').classList.remove('active');
-  document.getElementById('lb-grid').classList.add('active');
-}
-let lbImages = [];
-let lbIndex = 0;
-document.getElementById('lb-back').addEventListener('click', closeViewer);
-document.getElementById('lb-prev').addEventListener('click', () => showImage(lbIndex - 1));
-document.getElementById('lb-next').addEventListener('click', () => showImage(lbIndex + 1));
-END PREVIOUS GALLERY CODE */
 
 /* ---------------------------- PHOTO CAROUSELS (Recognitions & Gallery) ---------------------------- */
 let allViewerImages = [];
@@ -877,7 +756,7 @@ async function initPhotoCarousel(folderId, stateElId, trackElId, prevBtnId, next
       const slide = document.createElement('button');
       slide.type = 'button'; slide.className = 'car-slide';
       slide.innerHTML = `<img src="${file.thumbnailLink.replace('=s220','=s600')}" alt="${file.name || ''}" loading="lazy">
-        <div class="car-caption">${file.description || file.name}</div>`;
+        <div class="cal-caption">${file.description || file.name}</div>`;
       slide.addEventListener('click', () => openPhotoViewer(globalIdx));
       track.appendChild(slide);
     });
@@ -892,7 +771,6 @@ async function initPhotoCarousel(folderId, stateElId, trackElId, prevBtnId, next
 }
 
 // Initialize Recognitions and Gallery carousels with their respective folder IDs
-// Auto-detect Recognitions subfolder if dedicated ID is not provided
 (async function(){
   let recFolderId = CONFIG.RECOGNITION_FOLDER_ID;
   if(!recFolderId || recFolderId.startsWith('YOUR_')){
@@ -906,6 +784,7 @@ async function initPhotoCarousel(folderId, stateElId, trackElId, prevBtnId, next
   }
   initPhotoCarousel(recFolderId, 'rec-carousel-state', 'rec-carousel-track', 'rec-car-prev', 'rec-car-next', 'Recognitions');
 })();
+
 initPhotoCarousel(CONFIG.GALLERY_FOLDER_ID, 'gal-carousel-state', 'gal-carousel-track', 'gal-car-prev', 'gal-car-next', 'Gallery');
 
 /* full-screen photo viewer */
@@ -1183,3 +1062,4 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
 </script>
 </body>
 </html>
+```[file-tag: code-generated-file-3.10-Gemini]
