@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Svachhya Sadak — स्वच्छ सड़क अभियान</title>
+<link rel="icon" type="image/png" href="slogo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#132420; --ink-soft:#526059; --paper:#F6F9F7; --surface:#FFFFFF;
+    --green:#1F8321; --green-bright:#5AA31E; --navy:#0B2A4A; --blue:#0068A5; --slate:#33434F;
+    --line:rgba(11,42,74,0.12); --glass:rgba(255,255,255,0.6);
+    --display:'Oswald',sans-serif; --body:'Source Serif 4',serif; --mono:'IBM Plex Mono',monospace; --dev:'Noto Sans Devanagari',sans-serif;
+    --radius:6px; --maxw:1160px; --ease:cubic-bezier(.22,.68,0,1.01);
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased; }
+  .hi{ font-family:var(--dev); }
+  h1,h2,h3{ font-family:var(--display); text-transform:uppercase; letter-spacing:.01em; margin:0; }
+  a{ color:inherit; } img{ max-width:100%; display:block; }
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 28px; }
+  .eyebrow{ font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--blue); display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .eyebrow::before{ content:""; width:22px; height:2px; background:var(--green-bright); display:inline-block; }
+  ::selection{ background:var(--green-bright); color:#fff; }
+  :focus-visible{ outline:3px solid var(--blue); outline-offset:2px; }
+
+  .btn{ font-family:var(--mono); font-size:13px; letter-spacing:.06em; text-transform:uppercase; display:inline-flex; align-items:center; gap:8px;
+    padding:14px 24px; border-radius:var(--radius); border:1px solid var(--green); background:var(--green); color:#fff; cursor:pointer;
+    text-decoration:none; transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s ease; }
+  .btn:hover{ transform:translateY(-2px); background:var(--green-bright); border-color:var(--green-bright); box-shadow:0 14px 28px -14px rgba(31,131,33,.6); }
+  .btn.ghost{ background:transparent; color:var(--ink); border-color:var(--line); }
+  .btn.ghost:hover{ background:var(--ink); color:#fff; border-color:var(--ink); box-shadow:none; }
+  .btn.wa{ background:#25D366; border-color:#25D366; color:#06210f; }
+  .btn.wa:hover{ background:#1ebe5a; border-color:#1ebe5a; box-shadow:0 14px 28px -14px rgba(37,211,102,.6); }
+
+  /* ---------------- scroll progress road ---------------- */
+  #route-progress{ position:fixed; top:0; left:0; right:0; height:5px; z-index:200; background:rgba(11,42,74,.08); }
+  #route-progress .fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--green),var(--blue)); transition:width .08s linear; position:relative; }
+  #route-progress .fill::after{ content:"🚶"; position:absolute; right:-9px; top:50%; transform:translateY(-50%); font-size:12px; }
+
+  [data-reveal]{ opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+  [data-reveal].in{ opacity:1; transform:translateY(0); }
+  [data-reveal-stagger] > *{ opacity:0; transform:translateY(20px); transition:opacity .6s var(--ease), transform .6s var(--ease); }
+  [data-reveal-stagger].in > *{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion: reduce){ [data-reveal],[data-reveal-stagger]>*{ opacity:1!important; transform:none!important; transition:none!important; } }
+
+  /* ---------------- nav ---------------- */
+  header.site{ position:sticky; top:5px; z-index:90; background:rgba(246,249,247,.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 28px; max-width:var(--maxw); margin:0 auto; }
+  .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .brand-mark{ width:34px; height:34px; transition:transform .5s var(--ease); }
+  .brand:hover .brand-mark{ transform:rotate(-10deg) scale(1.06); }
+  .brand-text{ font-family:var(--display); font-weight:600; font-size:15.5px; letter-spacing:.03em; }
+  .brand-text b{ color:var(--green); } .brand-text i{ font-style:normal; color:var(--navy); }
+  nav.links{ display:flex; gap:24px; font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
+  nav.links a{ position:relative; text-decoration:none; padding-bottom:3px; }
+  nav.links a::after{ content:""; position:absolute; left:0; right:100%; bottom:0; height:2px; background:var(--green-bright); transition:right .25s var(--ease); }
+  nav.links a:hover::after{ right:0; }
+  @media (max-width:820px){ nav.links{ display:none; } }
+
+  /* ---------------- hero split ---------------- */
+  .hero{ padding:64px 0 40px; position:relative; overflow:hidden; }
+  .hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center; }
+  @media (max-width:940px){ .hero-grid{ grid-template-columns:1fr; } }
+  .hero-eyebrow{ color:var(--green); }
+  .hero h1.wordmark{ font-size:0; margin:6px 0 22px; }
+  .hero-logo-img{ width:min(420px,86vw); }
+  .hero p.lede{ font-size:19px; color:var(--ink-soft); max-width:520px; margin:0 0 30px; }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:46px; }
+  .hero-stats{ display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line); padding-top:20px; max-width:600px; }
+  .hero-stats b{ display:block; font-family:var(--display); font-size:26px; color:var(--navy); }
+  .hero-stats span{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; }
+
+  .hero-rings{ position:relative; aspect-ratio:1/1; max-width:440px; margin:0 auto; }
+  .ring{ position:absolute; inset:0; border-radius:50%; border:2px solid transparent; }
+  .ring.r1{ border-top-color:var(--green); border-right-color:var(--green); animation:spin 18s linear infinite; }
+  .ring.r2{ inset:34px; border-bottom-color:var(--blue); border-left-color:var(--blue); animation:spin 14s linear infinite reverse; }
+  .ring.r3{ inset:68px; border-top-color:var(--green-bright); border-left-color:var(--green-bright); animation:spin 22s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .hero-rings .core{ position:absolute; inset:96px; border-radius:50%; background:var(--surface); box-shadow:0 20px 50px -20px rgba(11,42,74,.35), inset 0 0 0 1px var(--line); display:flex; align-items:center; justify-content:center; padding:22px; }
+  .hero-rings .core img{ width:100%; animation:float 6s ease-in-out infinite; }
+  @keyframes float{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+  @media (prefers-reduced-motion: reduce){ .ring{ animation:none; } .hero-rings .core img{ animation:none; } }
+  @media (max-width:940px){ .hero-rings{ max-width:280px; } }
+
+  /* ---------------- sections ---------------- */
+  section{ padding:84px 0; position:relative; }
+  section.tint{ background:var(--surface); }
+  section.diag::before{ content:""; position:absolute; top:-1px; left:0; right:0; height:60px; background:var(--surface);
+    clip-path:polygon(0 100%, 100% 0, 100% 100%); }
+  .section-head{ max-width:660px; margin-bottom:46px; }
+  .section-head h2{ font-size:clamp(28px,4vw,44px); line-height:1.05; color:var(--ink); }
+  .section-head p{ color:var(--ink-soft); margin-top:14px; font-size:17px; }
+
+  .pillars{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; counter-reset:pillar; }
+  @media (max-width:900px){ .pillars{ grid-template-columns:1fr; } }
+  .pillar{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px; position:relative; overflow:hidden;
+    transition:transform .35s var(--ease), box-shadow .35s var(--ease); counter-increment:pillar; }
+  .pillar:hover{ transform:translateY(-7px); box-shadow:0 24px 46px -26px rgba(11,42,74,.4); }
+  .pillar::before{ content:"0" counter(pillar); position:absolute; top:-6px; right:10px; font-family:var(--display); font-size:64px; color:var(--line); }
+  .pillar h3{ font-size:20px; text-transform:none; letter-spacing:0; color:var(--navy); margin:4px 0 10px; position:relative; }
+  .pillar p{ color:var(--ink-soft); font-size:15.5px; position:relative; }
+
+  .cards3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  @media (max-width:840px){ .cards3{ grid-template-columns:1fr; } }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px; position:relative; overflow:hidden;
+    transition:transform .35s var(--ease), box-shadow .35s var(--ease); }
+  .card::before{ content:""; position:absolute; left:0; top:0; right:0; height:3px; background:linear-gradient(90deg,var(--green),var(--blue)); transform:scaleX(0); transform-origin:left; transition:transform .4s var(--ease); }
+  .card:hover{ transform:translateY(-6px); box-shadow:0 20px 40px -22px rgba(11,42,74,.35); }
+  .card:hover::before{ transform:scaleX(1); }
+  .card .icon{ width:34px; height:34px; margin-bottom:16px; }
+  .card h3{ font-size:17px; text-transform:none; letter-spacing:0; margin-bottom:8px; }
+  .card p{ color:var(--ink-soft); font-size:15.5px; }
+
+  /* gallery */
+  .gallery-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:16px; }
+  .album{ position:relative; border-radius:var(--radius); overflow:hidden; aspect-ratio:4/3; background:linear-gradient(135deg,var(--navy),var(--slate));
+    text-decoration:none; display:block; border:1px solid var(--line); opacity:0; transform:translateY(16px) scale(.97);
+    transition:opacity .5s var(--ease), transform .5s var(--ease), box-shadow .3s ease; }
+  .album.shown{ opacity:1; transform:translateY(0) scale(1); }
+  .album:hover{ box-shadow:0 20px 38px -18px rgba(11,42,74,.42); }
+  .album img{ width:100%; height:100%; object-fit:cover; opacity:.9; transition:transform .6s var(--ease); }
+  .album:hover img{ transform:scale(1.08); }
+  .album .tag{ position:absolute; left:0; right:0; bottom:0; padding:14px; color:#fff; font-family:var(--mono); font-size:12.5px;
+    background:linear-gradient(to top, rgba(11,42,74,.85), transparent); transform:translateY(6px); transition:transform .3s ease; }
+  .album:hover .tag{ transform:translateY(0); }
+  .album.empty{ display:flex; align-items:center; justify-content:center; color:rgba(245,248,246,.6); font-family:var(--mono); font-size:12px; text-align:center; padding:20px; }
+  .gallery-state{ font-family:var(--mono); font-size:13px; color:var(--ink-soft); margin-bottom:20px; }
+  .gallery-empty-banner{ border:1px dashed var(--line); border-radius:var(--radius); padding:34px; text-align:center; color:var(--ink-soft); grid-column:1/-1; }
+  .gallery-empty-banner b{ display:block; color:var(--ink); font-family:var(--display); text-transform:none; font-size:18px; margin-bottom:6px; }
+
+  /* appeal — sliding tab indicator */
+  .stake-tabs{ position:relative; display:flex; flex-wrap:wrap; gap:6px; margin-bottom:0; border-bottom:1px solid var(--line); padding-bottom:14px; }
+  .stake-tab{ font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.05em; padding:10px 16px; border:none; border-radius:20px;
+    background:transparent; cursor:pointer; color:var(--ink-soft); transition:color .2s ease; position:relative; z-index:2; }
+  .stake-tab.active{ color:#fff; }
+  .stake-tab:hover:not(.active){ color:var(--ink); }
+  #stake-indicator{ position:absolute; height:36px; border-radius:20px; background:var(--navy); transition:left .3s var(--ease), width .3s var(--ease); z-index:1; }
+  .stake-panel{ display:none; border:1px solid var(--line); border-top:none; border-radius:0 0 var(--radius) var(--radius); padding:30px; background:var(--surface); animation:panel-in .4s var(--ease); }
+  .stake-panel.active{ display:block; }
+  @keyframes panel-in{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
+  .stake-panel h3{ font-size:20px; text-transform:none; letter-spacing:0; margin-bottom:14px; color:var(--navy); }
+  .commit-list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  .commit-list li{ padding-left:22px; position:relative; color:var(--ink-soft); font-size:15.5px; opacity:0; transform:translateX(-8px); animation:li-in .4s var(--ease) forwards; }
+  .commit-list li::before{ content:"—"; position:absolute; left:0; color:var(--green); }
+  @keyframes li-in{ to{ opacity:1; transform:translateX(0);} }
+
+  .partner-ctas{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:28px; }
+  @media (max-width:640px){ .partner-ctas{ grid-template-columns:1fr; } }
+  .partner-cta{ border:1px solid var(--line); border-radius:var(--radius); padding:20px; background:var(--surface); transition:border-color .2s ease, transform .2s ease; }
+  .partner-cta:hover{ border-color:var(--blue); transform:translateY(-3px); }
+  .partner-cta h4{ font-family:var(--display); font-size:15px; text-transform:none; margin:0 0 6px; color:var(--navy); }
+  .partner-cta p{ font-size:14.5px; color:var(--ink-soft); margin:0 0 14px; }
+
+  /* pledge */
+  .pledge-wrap{ display:grid; grid-template-columns:.9fr 1.1fr; gap:48px; }
+  @media (max-width:900px){ .pledge-wrap{ grid-template-columns:1fr; } }
+  .pledge-side p{ color:var(--ink-soft); margin-top:14px; }
+  .steps{ display:flex; gap:10px; margin-top:28px; }
+  .step{ flex:1; text-align:center; padding:16px 8px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-transform:uppercase; }
+  .step b{ display:block; font-family:var(--display); font-size:20px; color:var(--green); text-transform:none; margin-bottom:4px; }
+  .badge-row{ display:flex; gap:14px; margin-top:26px; }
+  .badge{ width:64px; height:64px; border-radius:50%; border:2px dashed var(--line); display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:9px; text-align:center; color:var(--ink-soft); padding:4px; transition:border-color .3s ease, transform .3s var(--ease); }
+  .badge:hover{ border-color:var(--green-bright); border-style:solid; transform:rotate(-4deg) scale(1.05); color:var(--green); }
+
+  form.signup{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:32px; position:relative; }
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:7px; }
+  .field input, .field textarea{ width:100%; font-family:var(--body); font-size:15.5px; padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius); background:#fff; color:var(--ink); transition:border-color .2s ease, box-shadow .2s ease; }
+  .field input:focus, .field textarea:focus{ border-color:var(--blue); box-shadow:0 0 0 3px rgba(0,104,165,.12); outline:none; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:520px){ .field-row{ grid-template-columns:1fr; } }
+
+  .success-panel{ display:none; text-align:center; padding:20px 6px 4px; }
+  .success-panel.show{ display:block; animation:panel-in .5s var(--ease); }
+  .check{ width:56px; height:56px; border-radius:50%; background:var(--green); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+  .check svg{ width:26px; height:26px; }
+  .success-panel h3{ font-size:19px; text-transform:none; letter-spacing:0; color:var(--navy); margin-bottom:8px; }
+  .success-panel p{ color:var(--ink-soft); font-size:15px; margin-bottom:20px; }
+  .form-msg{ font-family:var(--mono); font-size:13px; margin-top:14px; display:none; align-items:center; gap:8px; }
+  .form-msg.show{ display:flex; } .form-msg.warn{ color:#a13; }
+
+  /* floating join button */
+  #fab-join{ position:fixed; right:22px; bottom:26px; z-index:150; display:flex; align-items:center; gap:10px;
+    padding:14px 20px 14px 16px; border-radius:40px; background:var(--navy); color:#fff; text-decoration:none;
+    font-family:var(--mono); font-size:12.5px; text-transform:uppercase; letter-spacing:.06em;
+    box-shadow:0 16px 34px -14px rgba(11,42,74,.55); opacity:0; transform:translateY(16px) scale(.9); pointer-events:none;
+    transition:opacity .35s var(--ease), transform .35s var(--ease), background .25s ease; }
+  #fab-join.visible{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  #fab-join:hover{ background:var(--green); }
+  #fab-join .pulse{ position:absolute; inset:0; border-radius:40px; border:2px solid var(--green-bright); animation:pulse-ring 2.2s ease-out infinite; }
+  @keyframes pulse-ring{ 0%{ transform:scale(1); opacity:.7;} 100%{ transform:scale(1.35); opacity:0;} }
+  #fab-join .dot{ width:8px; height:8px; border-radius:50%; background:var(--green-bright); }
+  @media (prefers-reduced-motion: reduce){ #fab-join .pulse{ animation:none; } }
+
+  /* ---------------- photo carousel ---------------- */
+  .carousel-wrap{ position:relative; display:flex; align-items:center; gap:10px; }
+  .carousel-track{ display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; padding:6px 2px 14px; flex:1;
+    -ms-overflow-style:none; scrollbar-width:thin; }
+  .carousel-track::-webkit-scrollbar{ height:8px; }
+  .carousel-track::-webkit-scrollbar-thumb{ background:var(--line); border-radius:8px; }
+  .car-slide{ flex:none; width:260px; scroll-snap-align:start; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden; cursor:pointer; padding:0; text-align:left; transition:transform .3s var(--ease), box-shadow .3s var(--ease); }
+  .car-slide:hover{ transform:translateY(-5px); box-shadow:0 18px 34px -18px rgba(11,42,74,.35); }
+  .car-slide img{ width:100%; height:180px; object-fit:cover; display:block; }
+  .car-caption{ padding:12px 14px; font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); line-height:1.5;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .car-arrow{ flex:none; width:42px; height:42px; border-radius:50%; border:1px solid var(--line); background:var(--surface); color:var(--navy);
+    cursor:pointer; font-size:14px; transition:background .2s ease, color .2s ease, transform .2s ease; }
+  .car-arrow:hover{ background:var(--navy); color:#fff; transform:scale(1.05); }
+  @media (max-width:640px){ .car-arrow{ display:none; } }
+
+  #photo-viewer{ position:fixed; inset:0; z-index:320; background:rgba(6,10,9,.94); display:none; align-items:center; justify-content:center; flex-direction:column; padding:30px; }
+  #photo-viewer.open{ display:flex; animation:lb-fade .25s ease; }
+  #photo-viewer .pv-stage{ position:relative; display:flex; align-items:center; justify-content:center; max-width:92vw; }
+  #photo-viewer img{ max-width:88vw; max-height:74vh; border-radius:4px; box-shadow:0 30px 70px -20px rgba(0,0,0,.6); }
+  #pv-caption{ color:rgba(245,248,246,.85); font-family:var(--mono); font-size:13px; margin-top:18px; text-align:center; max-width:700px; line-height:1.6; }
+  #pv-close{ position:absolute; top:22px; right:26px; background:none; border:none; color:#fff; font-size:32px; line-height:1; cursor:pointer; }
+  #pv-close:hover{ color:var(--green-bright); }
+  #pv-prev, #pv-next{ position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.12); color:#fff; border:none;
+    width:44px; height:44px; border-radius:50%; cursor:pointer; font-size:16px; transition:background .2s ease; }
+  #pv-prev:hover, #pv-next:hover{ background:var(--green); }
+  #pv-prev{ left:-56px; } #pv-next{ right:-56px; }
+  @media (max-width:900px){ #pv-prev{ left:8px; } #pv-next{ right:8px; } }
+
+  /* ---------------- documents ---------------- */
+  .docs-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+  .doc-album{ text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:24px; cursor:pointer;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .2s ease; opacity:0; transform:translateY(14px); }
+  .doc-album.shown{ opacity:1; transform:translateY(0); }
+  .doc-album:hover{ transform:translateY(-6px); box-shadow:0 20px 40px -22px rgba(11,42,74,.35); border-color:var(--blue); }
+  .doc-album .folder-icon{ width:32px; height:32px; color:var(--blue); margin-bottom:14px; }
+  .doc-album h4{ font-family:var(--display); font-size:16px; text-transform:none; letter-spacing:0; color:var(--navy); margin-bottom:6px; }
+  .doc-album span{ font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; }
+
+  .docs-grid.inner{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+  .doc-card{ display:flex; align-items:flex-start; gap:14px; text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px; cursor:pointer; transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .2s ease;
+    opacity:0; transform:translateY(14px); width:100%; }
+  .doc-card.shown{ opacity:1; transform:translateY(0); }
+  .doc-card:hover{ transform:translateY(-5px); box-shadow:0 18px 34px -20px rgba(11,42,74,.35); border-color:var(--blue); }
+  .doc-icon{ flex:none; width:42px; height:42px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:10px; font-weight:600; color:#fff; text-transform:uppercase; }
+  .doc-icon.pdf{ background:#C1440E; } .doc-icon.doc{ background:#0068A5; } .doc-icon.ppt{ background:#C1440E; }
+  .doc-icon.sheet{ background:#1F8321; } .doc-icon.other{ background:var(--slate); }
+  .doc-meta{ min-width:0; }
+  .doc-name{ font-family:var(--display); font-size:14.5px; text-transform:none; letter-spacing:0; color:var(--ink); line-height:1.3; margin-bottom:4px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .doc-type{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; }
+
+  .lb-grid.docs-mode{ grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); align-content:start; }
+  .lb-grid.docs-mode .doc-card{ aspect-ratio:auto; }
+
+
+  #doc-viewer{ position:fixed; inset:0; z-index:300; background:rgba(11,18,16,.88); display:none; align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(4px); }
+  #doc-viewer.open{ display:flex; animation:lb-fade .25s ease; }
+  .dv-panel{ background:var(--surface); border-radius:var(--radius); width:min(1000px, 100%); height:min(86vh, 900px); display:flex; flex-direction:column; overflow:hidden; box-shadow:0 30px 70px -20px rgba(0,0,0,.5); }
+  .dv-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 20px; border-bottom:1px solid var(--line); font-family:var(--display); font-size:15px; text-transform:none; letter-spacing:0; color:var(--navy); }
+  .dv-head span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #dv-close{ background:none; border:none; font-size:26px; line-height:1; color:var(--ink-soft); cursor:pointer; padding:0 4px; flex:none; }
+  #dv-close:hover{ color:var(--navy); }
+  #dv-frame{ flex:1; width:100%; border:none; background:var(--paper); }
+
+  /* ---------------- lightbox ---------------- */
+  #lightbox{ position:fixed; inset:0; z-index:300; background:rgba(11,18,16,.88); display:none; align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(4px); }
+  #lightbox.open{ display:flex; animation:lb-fade .25s ease; }
+  @keyframes lb-fade{ from{ opacity:0; } to{ opacity:1; } }
+  .lb-panel{ background:var(--surface); border-radius:var(--radius); width:min(980px, 100%); max-height:88vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 30px 70px -20px rgba(0,0,0,.5); }
+  .lb-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--line); font-family:var(--display); font-size:16px; text-transform:none; letter-spacing:0; color:var(--navy); }
+  #lb-close{ background:none; border:none; font-size:26px; line-height:1; color:var(--ink-soft); cursor:pointer; padding:0 4px; transition:color .2s ease; }
+  #lb-close:hover{ color:var(--navy); }
+  .lb-grid{ display:none; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; padding:20px; overflow-y:auto; }
+  .lb-grid.active{ display:grid; }
+  .lb-thumb{ padding:0; border:1px solid var(--line); border-radius:4px; overflow:hidden; aspect-ratio:1/1; background:var(--paper); cursor:pointer; transition:transform .2s ease, box-shadow .2s ease; }
+  .lb-thumb:hover{ transform:scale(1.04); box-shadow:0 10px 22px -12px rgba(11,42,74,.4); }
+  .lb-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .lb-loading{ grid-column:1/-1; text-align:center; padding:40px; color:var(--ink-soft); font-family:var(--mono); font-size:13px; }
+  .lb-viewer{ display:none; flex-direction:column; padding:16px 20px 20px; overflow-y:auto; }
+  .lb-viewer.active{ display:flex; }
+  .lb-back{ align-self:flex-start; background:none; border:none; font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--blue); cursor:pointer; margin-bottom:12px; padding:0; }
+  .lb-back:hover{ color:var(--green); }
+  .lb-viewer-stage{ position:relative; display:flex; align-items:center; justify-content:center; background:var(--paper); border-radius:4px; min-height:300px; }
+  .lb-viewer-stage img{ max-width:100%; max-height:60vh; border-radius:4px; }
+  .lb-arrow{ position:absolute; top:50%; transform:translateY(-50%); background:rgba(11,42,74,.75); color:#fff; border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:15px; transition:background .2s ease; }
+  .lb-arrow:hover{ background:var(--green); }
+  .lb-arrow-left{ left:10px; } .lb-arrow-right{ right:10px; }
+  .lb-caption{ text-align:center; font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); margin-top:14px; }
+  @media (max-width:640px){ .lb-panel{ max-height:94vh; } .lb-viewer-stage img{ max-height:48vh; } }
+
+  footer{ background:var(--navy); color:#fff; padding:58px 0 30px; margin-top:20px; }
+  .foot-grid{ display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:36px; margin-bottom:44px; }
+  @media (max-width:760px){ .foot-grid{ grid-template-columns:1fr; } }
+  .foot-brand{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .foot-brand img{ width:42px; }
+  footer h4{ font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; color:rgba(245,248,246,.55); margin-bottom:14px; }
+  footer p, footer a{ font-size:14.5px; color:rgba(245,248,246,.85); text-decoration:none; }
+  footer nav a{ transition:color .2s ease; } footer nav a:hover{ color:var(--green-bright); }
+  .qr-block{ display:flex; align-items:center; gap:14px; }
+  .qr-box{ width:76px; height:76px; background:#fff; border-radius:var(--radius); flex:none; padding:6px; }
+  .foot-bottom{ border-top:1px solid rgba(245,248,246,.14); padding-top:22px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-family:var(--mono); font-size:11.5px; color:rgba(245,248,246,.5); }
+</style>
+</head>
+<body>
+
+<div id="route-progress"><div class="fill"></div></div>
+
+<header class="site">
+  <div class="navbar">
+    <a class="brand" href="#top">
+      <img class="brand-mark" src="slogo.png" alt="Svachhya Sadak logo">
+      <span class="brand-text"><b>Svachhya</b> <i>Sadak</i></span>
+    </a>
+    <nav class="links">
+      <a href="#about">About</a><a href="#gallery">Gallery</a><a href="#documents">Docs</a><a href="#appeal">Appeal</a><a href="#pledge">Pledge</a><a href="#join">Join</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow hero-eyebrow">Sigma Consultants presents a citizen mission</div>
+        <img class="hero-logo-img" src="blogo.png" alt="Svachhya Sadak — स्वच्छ सड़क अभियान">
+        <p class="lede">A Clean Road is the ultimate reflection of a disciplined, progressive nation. We're building citizen-led systems — not just awareness — to end littering on India's public roads.</p>
+        <div class="hero-ctas">
+         <!--  <a href="#join" class="btn">Become an Associate</a>
+          <a href="#appeal" class="btn ghost">Partner With Us</a> -->
+        </div>
+      <!--   <div class="hero-stats">
+          <div><b class="count" data-count="3">0</b><span>Mission Pillars</span></div>
+          <div><b class="count" data-count="9">0</b><span>Stakeholder Groups</span></div>
+          <div><b class="count" data-count="30" data-suffix="+ yrs">0</b><span>Lean &amp; Quality Legacy</span></div>
+        </div> -->
+      </div>
+      <div class="hero-rings" aria-hidden="true">
+        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+        <div class="core"><img src="slogo.png" alt=""></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section id="about" class="tint diag">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Goal</div>
+        <h2>Establish cleanliness on public roads and places in India.</h2>
+        <p class="hi" style="font-size:16px;">भारत मे आम सडक और अन्य जगहों मे स्वच्छता प्रस्थापित करे</p>
+      </div>
+      <div class="pillars" data-reveal-stagger>
+        <div class="pillar"><h3>Stop the litter at the source</h3>
+          <p>Prevent people from generating garbage — empty cigarette packs, paper, spit — on public roads, through direct, emotionally grounded conversations and leaflets, right where littering happens.</p></div>
+        <div class="pillar"><h3>Get bins installed and maintained</h3>
+          <p>Appeal to municipal authorities and large corporations to fund, place, and maintain small garbage-collection bins — with an attendant — on public roads.</p></div>
+        <div class="pillar"><h3>Strengthen enforcement</h3>
+          <p>Improve the system that prevents households from dumping garbage directly onto roads — including voluntary ambassadors with authority to flag repeat offenders.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHY IT MATTERS ================= -->
+  <section>
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Why It Matters</div>
+        <h2>Cleanliness is a key to a healthier, happier world.</h2>
+        <p>Public spaces are where a nation's discipline becomes visible. Three reasons this mission is worth the effort:</p>
+      </div>
+      <div class="cards3" data-reveal-stagger>
+        <div class="card"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-9-9.5C1.5 6.5 5 3 8.5 4.5 10 5.2 11 7 12 8c1-1 2-2.8 3.5-3.5C19 3 22.5 6.5 21 11.5 19 16.5 12 21 12 21Z" stroke="#1F8321" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <h3>Public health</h3><p>Less waste on roads means fewer breeding grounds for disease and safer streets for daily life.</p></div>
+        <div class="card"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 3c4 3 7 7 7 11a7 7 0 1 1-14 0c0-4 3-8 7-11Z" stroke="#0068A5" stroke-width="1.6"/></svg>
+          <h3>Environment</h3><p>Litter-free roads mean less plastic and waste entering drains, soil, and eventually water systems.</p></div>
+        <div class="card"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 20V10l8-6 8 6v10" stroke="#0B2A4A" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 20v-6h6v6" stroke="#0B2A4A" stroke-width="1.6"/></svg>
+          <h3>Economy &amp; pride</h3><p>Cleaner public spaces enhance India's global image, improve tourism, and strengthen civic pride.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GALLERY ================= -->
+  <section class="tint diag" id="gallery">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Gallery</div>
+        <h2>Drives, in photos and video.</h2>
+        <p>Every photo from the campaign's Google Drive — root and nested folders — in one scrollable strip. Descriptions come from a matching .txt file next to each photo. Click a photo to view it full-screen.</p>
+      </div>
+      <div id="carousel-state" class="gallery-state">Loading photos…</div>
+      <div class="carousel-wrap">
+        <button type="button" id="car-prev" class="car-arrow car-arrow-left" aria-label="Scroll left">&#10094;</button>
+        <div class="carousel-track" id="carousel-track"></div>
+        <button type="button" id="car-next" class="car-arrow car-arrow-right" aria-label="Scroll right">&#10095;</button>
+      </div>
+
+      <!-- Previous folder-album gallery grid — kept for reference, not in use.
+      <div id="gallery-state" class="gallery-state">Loading albums…</div>
+      <div id="gallery-grid" class="gallery-grid"></div>
+      -->
+    </div>
+  </section>
+
+  <!-- ================= DOCUMENTS ================= -->
+  <section id="documents">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Resources</div>
+        <h2>Read the mission docs.</h2>
+        <p>Every folder on the campaign Drive — About, Appeal, Database, Website, and any nested folders inside them — becomes a folder card here. Open one to browse its documents, and click any document to read it right on the page.</p>
+      </div>
+      <div id="docs-state" class="gallery-state">Loading documents…</div>
+      <div id="docs-grid" class="docs-grid"></div>
+    </div>
+  </section>
+
+  <!-- ================= APPEAL ================= -->
+  <section id="appeal">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Appeal</div>
+        <h2>Partner with us — every stakeholder has a role.</h2>
+        <p>Sigma Consultants has written directly to industries, colleges, and institutions inviting them to commit to specific actions. Pick a group to see what's asked of them.</p>
+      </div>
+      <div class="stake-tabs" id="stake-tabs"><div id="stake-indicator"></div></div>
+      <div id="stake-panels"></div>
+      <div class="partner-ctas">
+        <div class="partner-cta"><h4>For Industries &amp; Companies</h4><p>Sponsor pledge cards, stickers, 5S training, and public bins/toilets through your CSR programme.</p>
+          <a class="btn ghost" href="mailto:dhananjay1731972@gmail.com?subject=Swachhya%20Sadak%20—%20Industry%20Partnership">Request the Partnership Letter</a></div>
+        <div class="partner-cta"><h4>For Colleges &amp; Schools</h4><p>Run pledge drives, 5S sessions, and "Singing with Lean Management" events with students and faculty.</p>
+          <a class="btn ghost" href="mailto:dhananjay1731972@gmail.com?subject=Swachhya%20Sadak%20—%20Educational%20Partnership">Request the Partnership Letter</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PLEDGE / JOIN ================= -->
+  <section class="tint diag" id="pledge">
+    <div class="wrap pledge-wrap">
+      <div class="pledge-side" data-reveal>
+        <div class="eyebrow">Pledge</div>
+        <h2>Take the pledge. Wear the badge.</h2>
+        <p>Every associate receives a Pledge Sticker, an Awareness Card, and — for active volunteers — a Swachhya Sadak Badge.</p>
+        <div class="steps">
+          <div class="step"><b>1</b>Fill the form</div>
+          <div class="step"><b>2</b>Join WhatsApp group</div>
+          <div class="step"><b>3</b>Get your kit</div>
+        </div>
+        <div class="badge-row">
+          <div class="badge">PLEDGE<br>STICKER</div><div class="badge">AWARENESS<br>CARD</div><div class="badge">VOLUNTEER<br>BADGE</div>
+        </div>
+      </div>
+
+      <div id="join">
+        <form class="signup" id="signup-form" data-reveal>
+          <div id="form-fields">
+            <div class="eyebrow" style="margin-bottom:20px;">Associate Sign-Up</div>
+            <div class="field"><label for="f-name">Business/Organization full name — OR individual name</label>
+              <input id="f-name" name="orgOrName" required placeholder="e.g. Sigma Consultants, or Asha Patil"></div>
+            <div class="field"><label for="f-address">Address</label>
+              <input id="f-address" name="address" required placeholder="Street, area"></div>
+            <div class="field-row">
+              <div class="field"><label for="f-city">City (India) / Country (outside India)</label>
+                <input id="f-city" name="cityCountry" required placeholder="Pune, India"></div>
+              <div class="field"><label for="f-details">Occupation details</label>
+                <input id="f-details" name="details" placeholder="College, Company, Retired, Housewife…"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="f-email">Email ID (preferably Gmail)</label>
+                <input id="f-email" name="email" type="email" required placeholder="you@gmail.com"></div>
+              <div class="field"><label for="f-phone">Phone number</label>
+                <input id="f-phone" name="phone" type="tel" required placeholder="+91 "></div>
+            </div>
+            <div class="field"><label for="f-whatsapp">WhatsApp number</label>
+              <input id="f-whatsapp" name="whatsapp" type="tel" placeholder="+91 98231 90939"></div>
+            <div class="field"><label for="f-heard">How did you come to know Swachhya Sadak?</label>
+              <input id="f-heard" name="howHeard" placeholder="e.g. Through a friend, through a campaign"></div>
+            <div class="field"><label for="f-interest">Interested area — how would you like to participate?</label>
+              <textarea id="f-interest" name="interest" rows="3" placeholder="Share your idea"></textarea></div>
+            <button class="btn" type="submit" style="width:100%; justify-content:center;">Submit &amp; Join the Mission</button>
+            <div class="form-msg" id="form-msg"></div>
+          </div>
+
+          <div class="success-panel" id="success-panel">
+            <div class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l6 6L20 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <h3>You're in, Associate.</h3>
+            <p>Check your email for a confirmation. The last step — join the group where drives, updates, and photos get shared first.</p>
+            <a class="btn wa" id="wa-cta" href="https://chat.whatsapp.com/HeVz3s5FB8UFUo5JkeLGk6" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.1s.9 2.5 1.1 2.7c.1.2 1.9 2.9 4.6 4 .6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.6-.6 1.8-1.3.2-.6.2-1.1.2-1.2-.1-.2-.3-.2-.5-.3Z"/><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
+              Join the WhatsApp Group
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<a id="fab-join" href="#join"><span class="pulse"></span><span class="dot"></span> Join Us</a>
+
+<div id="photo-viewer" role="dialog" aria-modal="true">
+  <button type="button" id="pv-close" aria-label="Close">&times;</button>
+  <div class="pv-stage">
+    <button type="button" id="pv-prev" aria-label="Previous">&#10094;</button>
+    <img id="pv-img" src="" alt="">
+    <button type="button" id="pv-next" aria-label="Next">&#10095;</button>
+  </div>
+  <div id="pv-caption"></div>
+</div>
+
+<div id="doc-viewer" role="dialog" aria-modal="true">
+  <div class="dv-panel">
+    <div class="dv-head"><span id="dv-title"></span><button type="button" id="dv-close" aria-label="Close">&times;</button></div>
+    <iframe id="dv-frame" src="" title="Document preview" allow="autoplay"></iframe>
+  </div>
+</div>
+
+<div id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-panel">
+    <div class="lb-head">
+      <span id="lb-title"></span>
+      <button type="button" id="lb-close" aria-label="Close">&times;</button>
+    </div>
+    <div id="lb-grid" class="lb-grid active"></div>
+    <div id="lb-viewer" class="lb-viewer">
+      <button type="button" id="lb-back" class="lb-back">&larr; All photos</button>
+      <div class="lb-viewer-stage">
+        <button type="button" id="lb-prev" class="lb-arrow lb-arrow-left" aria-label="Previous">&#10094;</button>
+        <img id="lb-viewer-img" src="" alt="">
+        <button type="button" id="lb-next" class="lb-arrow lb-arrow-right" aria-label="Next">&#10095;</button>
+      </div>
+      <div id="lb-viewer-caption" class="lb-caption"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><img src="slogo.png" alt="Svachhya Sadak logo"><span style="font-family:var(--display); font-size:17px; letter-spacing:.02em;">Svachhya Sadak</span></div>
+        <p style="max-width:320px; margin-bottom:16px;">"Clean Roads. Responsible Citizens. Stronger Nation." An initiative of Sigma Consultants, led by Er. Dhananjay Apte.</p>
+        <p style="color:rgba(245,248,246,.5); font-family:var(--mono); font-size:12px;">www.swachhyasadak.in</p>
+      </div>
+      <div><h4>Sections</h4><nav>
+        <p><a href="#about">About — Goal, Mission &amp; Tasks</a></p>
+        <p style="margin-top:8px;"><a href="#gallery">Gallery — Photos &amp; Videos</a></p>
+        <p style="margin-top:8px;"><a href="#documents">Docs — Mission Resources</a></p>
+        <p style="margin-top:8px;"><a href="#appeal">Appeal — Partner With Us</a></p>
+        <p style="margin-top:8px;"><a href="#pledge">Pledge — Sticker, Card, Badge</a></p>
+      </nav></div>
+      <div><h4>Join on WhatsApp</h4>
+        <div class="qr-block">
+          <div class="qr-box"><svg viewBox="0 0 100 100" width="100%" height="100%"><rect width="100" height="100" fill="#fff"/><g fill="#0B2A4A"><rect x="8" y="8" width="24" height="24"/><rect x="14" y="14" width="12" height="12" fill="#fff"/><rect x="68" y="8" width="24" height="24"/><rect x="74" y="14" width="12" height="12" fill="#fff"/><rect x="8" y="68" width="24" height="24"/><rect x="14" y="74" width="12" height="12" fill="#fff"/><rect x="40" y="8" width="6" height="6"/><rect x="52" y="14" width="6" height="6"/><rect x="40" y="26" width="6" height="6"/><rect x="60" y="40" width="6" height="6"/><rect x="40" y="46" width="18" height="6"/><rect x="72" y="46" width="6" height="18"/><rect x="86" y="40" width="6" height="6"/><rect x="46" y="60" width="6" height="18"/><rect x="60" y="66" width="12" height="6"/><rect x="80" y="60" width="12" height="12"/><rect x="46" y="86" width="12" height="6"/></g></svg></div>
+          <div><p><a href="https://chat.whatsapp.com/HeVz3s5FB8UFUo5JkeLGk6" target="_blank" rel="noopener">Join the WhatsApp group →</a></p>
+          <p style="color:rgba(245,248,246,.5); font-size:13px; margin-top:4px;">or contact +91 98231 90939</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Sigma Consultants — Swachhya Sadak Mission</span><span>Quality Management · Lean · Six Sigma · Operational Excellence</span></div>
+  </div>
+</footer>
+
+<script>
+const CONFIG = { DRIVE_API_KEY:'AIzaSyDI6UBuJpo9QIuBi5O2XmgvtV6iL5P0-c8', GALLERY_FOLDER_ID:'1hqEunaltlz4l4qoFIWzXA4jqRbU9Xz6M', FORM_ENDPOINT:'https://script.google.com/macros/s/AKfycbyqaGguZ8ntdNfUQz1IDvL0lg303Xp5sRtIKOGGv4Rb6eFbneNPC2N1BWNlJpJDyEcz/exec' };
+const DOCS_ROOT_ID = '1ILPw1ejDbzOYA7bHYU8JY88W8gEIxMi3'; // campaign Drive root — documents are discovered recursively from here
+const WA_LINK = 'https://chat.whatsapp.com/HeVz3s5FB8UFUo5JkeLGk6';
+
+/* scroll progress road */
+const fillEl = document.querySelector('#route-progress .fill');
+function updateProgress(){
+  const h = document.documentElement;
+  const scrolled = h.scrollTop || document.body.scrollTop;
+  const height = h.scrollHeight - h.clientHeight;
+  fillEl.style.width = (height > 0 ? (scrolled/height)*100 : 0) + '%';
+}
+document.addEventListener('scroll', updateProgress, { passive:true });
+updateProgress();
+
+/* floating join button visibility */
+const fab = document.getElementById('fab-join');
+const heroEl = document.querySelector('.hero');
+const fabObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => fab.classList.toggle('visible', !e.isIntersecting));
+}, { threshold:0 });
+fabObserver.observe(heroEl);
+
+/* reveal on scroll */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('in'); revealObserver.unobserve(entry.target); } });
+}, { threshold:.15, rootMargin:'0px 0px -60px 0px' });
+document.querySelectorAll('[data-reveal], [data-reveal-stagger]').forEach(el => revealObserver.observe(el));
+document.querySelectorAll('[data-reveal-stagger]').forEach(group => { [...group.children].forEach((c,i) => c.style.transitionDelay = (i*100)+'ms'); });
+
+/* count-up */
+function animateCount(el){
+  const target = parseInt(el.dataset.count,10), suffix = el.dataset.suffix || '', duration = 1100, start = performance.now();
+  function tick(now){ const p = Math.min(1,(now-start)/duration); const eased = 1-Math.pow(1-p,3); el.textContent = Math.round(eased*target)+suffix; if(p<1) requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+}
+document.querySelectorAll('.count').forEach(animateCount);
+
+/* gallery — PREVIOUS folder-album version, replaced by the horizontal photo
+   carousel below. Left here (commented out) for reference / easy revert.
+async function loadGallery(){
+  const stateEl = document.getElementById('gallery-state'), gridEl = document.getElementById('gallery-grid');
+  if(!CONFIG.DRIVE_API_KEY){
+    stateEl.innerHTML = '';
+    gridEl.innerHTML = `<div class="gallery-empty-banner"><b>Gallery isn't connected yet</b>Add a Drive API key in CONFIG at the bottom of this file, then each folder inside <span style="font-family:var(--mono)">GALLERY/</span> will appear here automatically.</div>`;
+    return;
+  }
+  try{
+    const folderQ = encodeURIComponent(`'${CONFIG.GALLERY_FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+    const folderRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${folderQ}&fields=files(id,name)&key=${CONFIG.DRIVE_API_KEY}`);
+    const albums = (await folderRes.json()).files || [];
+    if(albums.length === 0){
+      stateEl.innerHTML = '';
+      gridEl.innerHTML = `<div class="gallery-empty-banner"><b>No albums yet</b>Once photos are uploaded into folders inside GALLERY/, they'll show up here automatically.</div>`;
+      return;
+    }
+    stateEl.textContent = `${albums.length} album${albums.length===1?'':'s'} connected live from Google Drive`;
+    gridEl.innerHTML = '';
+    albums.forEach((album,i) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'album'; card.style.transitionDelay = (i*70)+'ms';
+      card.innerHTML = `<div class="tag">${album.name}</div>`;
+      card.addEventListener('click', () => openAlbum(album.id, album.name));
+      gridEl.appendChild(card);
+      requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('shown')));
+      const imgQ = encodeURIComponent(`'${album.id}' in parents and mimeType contains 'image/' and trashed=false`);
+      fetch(`https://www.googleapis.com/drive/v3/files?q=${imgQ}&fields=files(id,thumbnailLink)&pageSize=1&key=${CONFIG.DRIVE_API_KEY}`)
+        .then(r=>r.json()).then(d=>{
+          const file=(d.files||[])[0];
+          if(file && file.thumbnailLink){ const img=document.createElement('img'); img.src=file.thumbnailLink.replace('=s220','=s600'); img.alt=album.name; card.prepend(img); }
+          else{ card.classList.add('empty'); card.innerHTML = `<span>${album.name}<br><span style="opacity:.6">no photos yet</span></span>`; }
+        }).catch(()=>{ card.classList.add('empty'); card.textContent = album.name; });
+    });
+  }catch(err){ stateEl.textContent = 'Could not load the gallery — check the Drive API key and folder sharing settings.'; console.error(err); }
+}
+loadGallery();
+
+async function openAlbum(albumId, albumName){
+  const overlay = document.getElementById('lightbox');
+  const titleEl = document.getElementById('lb-title');
+  const gridEl = document.getElementById('lb-grid');
+  const viewerEl = document.getElementById('lb-viewer');
+
+  titleEl.textContent = albumName;
+  gridEl.innerHTML = '<div class="lb-loading">Loading photos…</div>';
+  viewerEl.classList.remove('active');
+  gridEl.classList.remove('docs-mode');
+  gridEl.classList.add('active');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  try{
+    const imgQ = encodeURIComponent(`'${albumId}' in parents and mimeType contains 'image/' and trashed=false`);
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${imgQ}&fields=files(id,name,thumbnailLink)&pageSize=200&key=${CONFIG.DRIVE_API_KEY}`);
+    const files = (await res.json()).files || [];
+    lbImages = files;
+
+    if(files.length === 0){
+      gridEl.innerHTML = '<div class="lb-loading">No photos in this album yet.</div>';
+      return;
+    }
+    gridEl.innerHTML = '';
+    files.forEach((file, i) => {
+      const thumb = document.createElement('button');
+      thumb.type = 'button'; thumb.className = 'lb-thumb';
+      thumb.innerHTML = `<img src="${file.thumbnailLink.replace('=s220','=s400')}" alt="${file.name || ''}" loading="lazy">`;
+      thumb.addEventListener('click', () => showImage(i));
+      gridEl.appendChild(thumb);
+    });
+  }catch(err){
+    gridEl.innerHTML = '<div class="lb-loading">Could not load photos — check the Drive API key and sharing settings.</div>';
+    console.error(err);
+  }
+}
+
+function showImage(i){
+  if(lbImages.length === 0) return;
+  lbIndex = (i + lbImages.length) % lbImages.length;
+  const file = lbImages[lbIndex];
+  document.getElementById('lb-viewer-img').src = file.thumbnailLink.replace('=s220','=s1600');
+  document.getElementById('lb-viewer-caption').textContent = `${file.name || ''} — ${lbIndex+1} of ${lbImages.length}`;
+  document.getElementById('lb-grid').classList.remove('active');
+  document.getElementById('lb-viewer').classList.add('active');
+}
+
+function closeViewer(){
+  document.getElementById('lb-viewer').classList.remove('active');
+  document.getElementById('lb-grid').classList.add('active');
+}
+let lbImages = [];
+let lbIndex = 0;
+document.getElementById('lb-back').addEventListener('click', closeViewer);
+document.getElementById('lb-prev').addEventListener('click', () => showImage(lbIndex - 1));
+document.getElementById('lb-next').addEventListener('click', () => showImage(lbIndex + 1));
+END PREVIOUS GALLERY CODE */
+
+/* ---------------------------- PHOTO CAROUSEL (current gallery) ---------------------------- */
+let carouselImages = [];
+let pvIndex = 0;
+
+function baseName(name){ return name.replace(/\.[^.]+$/, '').trim().toLowerCase(); }
+
+async function loadPhotoCarousel(){
+  const stateEl = document.getElementById('carousel-state');
+  const track = document.getElementById('carousel-track');
+
+  if(!CONFIG.DRIVE_API_KEY){
+    stateEl.innerHTML = '';
+    track.innerHTML = `<div class="gallery-empty-banner">Gallery isn't connected yet — add a Drive API key in CONFIG.</div>`;
+    return;
+  }
+
+  try{
+    // Recursively walk the Gallery folder tree (root + every nested folder),
+    // collecting every photo and every .txt description file along the way.
+    const queue = [CONFIG.GALLERY_FOLDER_ID];
+    const visited = new Set();
+    let images = [];
+    let texts = [];
+    let guard = 0;
+
+    while(queue.length && guard < 80){
+      guard++;
+      const folderId = queue.shift();
+      if(visited.has(folderId)) continue;
+      visited.add(folderId);
+
+      const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType,thumbnailLink)&pageSize=200&key=${CONFIG.DRIVE_API_KEY}`);
+      const children = (await res.json()).files || [];
+
+      children.forEach(c => {
+        if(c.mimeType === 'application/vnd.google-apps.folder'){ queue.push(c.id); }
+        else if(c.mimeType.startsWith('image/')){ images.push({ ...c, parentId: folderId }); }
+        else if(c.mimeType === 'text/plain'){ texts.push({ ...c, parentId: folderId }); }
+      });
+    }
+
+    if(images.length === 0){
+      stateEl.innerHTML = '';
+      track.innerHTML = `<div class="gallery-empty-banner">No photos yet — once images are uploaded anywhere inside the Gallery folder, they'll show up here automatically.</div>`;
+      return;
+    }
+
+    // Match each photo to a same-name .txt description file in the same folder.
+    const textByKey = {};
+    texts.forEach(t => { textByKey[t.parentId + '::' + baseName(t.name)] = t; });
+
+    stateEl.textContent = `Loading descriptions for ${images.length} photo${images.length===1?'':'s'}…`;
+
+    carouselImages = await Promise.all(images.map(async (img) => {
+      const match = textByKey[img.parentId + '::' + baseName(img.name)];
+      let description = '';
+      if(match){
+        try{
+          const r = await fetch(`https://www.googleapis.com/drive/v3/files/${match.id}?alt=media&key=${CONFIG.DRIVE_API_KEY}`);
+          description = (await r.text()).trim();
+        }catch(e){ /* no description available */ }
+      }
+      return { ...img, description };
+    }));
+
+    stateEl.textContent = `${carouselImages.length} photo${carouselImages.length===1?'':'s'} connected live from Google Drive`;
+    track.innerHTML = '';
+    carouselImages.forEach((file, i) => {
+      const slide = document.createElement('button');
+      slide.type = 'button'; slide.className = 'car-slide';
+      slide.innerHTML = `<img src="${file.thumbnailLink.replace('=s220','=s600')}" alt="${file.name || ''}" loading="lazy">
+        <div class="car-caption">${file.description || file.name}</div>`;
+      slide.addEventListener('click', () => openPhotoViewer(i));
+      track.appendChild(slide);
+    });
+  }catch(err){
+    stateEl.textContent = 'Could not load the gallery — check the Drive API key and folder sharing settings.';
+    console.error(err);
+  }
+}
+loadPhotoCarousel();
+
+document.getElementById('car-prev').addEventListener('click', () => {
+  document.getElementById('carousel-track').scrollBy({ left: -300, behavior: 'smooth' });
+});
+document.getElementById('car-next').addEventListener('click', () => {
+  document.getElementById('carousel-track').scrollBy({ left: 300, behavior: 'smooth' });
+});
+
+/* full-screen photo viewer */
+function openPhotoViewer(i){
+  document.getElementById('photo-viewer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  showCarouselImage(i);
+}
+function showCarouselImage(i){
+  if(carouselImages.length === 0) return;
+  pvIndex = (i + carouselImages.length) % carouselImages.length;
+  const file = carouselImages[pvIndex];
+  document.getElementById('pv-img').src = file.thumbnailLink.replace('=s220','=s1600');
+  const desc = file.description ? file.description + ' — ' : '';
+  document.getElementById('pv-caption').textContent = `${desc}${pvIndex+1} of ${carouselImages.length}`;
+}
+function closePhotoViewer(){
+  document.getElementById('photo-viewer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('pv-close').addEventListener('click', closePhotoViewer);
+document.getElementById('pv-prev').addEventListener('click', () => showCarouselImage(pvIndex - 1));
+document.getElementById('pv-next').addEventListener('click', () => showCarouselImage(pvIndex + 1));
+document.getElementById('photo-viewer').addEventListener('click', (e) => { if(e.target.id === 'photo-viewer') closePhotoViewer(); });
+document.addEventListener('keydown', (e) => {
+  if(!document.getElementById('photo-viewer').classList.contains('open')) return;
+  if(e.key === 'Escape') closePhotoViewer();
+  if(e.key === 'ArrowRight') showCarouselImage(pvIndex + 1);
+  if(e.key === 'ArrowLeft') showCarouselImage(pvIndex - 1);
+});
+
+/* ---------------------------- DOCUMENTS ---------------------------- */
+function docKind(mimeType){
+  if(mimeType.includes('pdf')) return 'pdf';
+  if(mimeType.includes('presentation')) return 'ppt';
+  if(mimeType.includes('spreadsheet')) return 'sheet';
+  if(mimeType.includes('document') || mimeType.includes('word')) return 'doc';
+  return 'other';
+}
+function docLabel(kind){
+  return { pdf:'PDF', ppt:'Slides', sheet:'Sheet', doc:'Doc', other:'File' }[kind];
+}
+
+async function loadDocuments(){
+  const stateEl = document.getElementById('docs-state'), gridEl = document.getElementById('docs-grid');
+  if(!CONFIG.DRIVE_API_KEY){
+    stateEl.innerHTML = '';
+    gridEl.innerHTML = `<div class="gallery-empty-banner">Documents aren't connected yet — add a Drive API key in CONFIG.</div>`;
+    return;
+  }
+  try{
+    // Recursively walk every folder under both the Docs root AND the Gallery root,
+    // grouping non-image documents by the folder they live in — folder name becomes
+    // the album name. This also catches document files placed inside Gallery albums,
+    // which the photo Gallery itself skips over.
+    const albums = [];
+    const queue = [
+      { id: DOCS_ROOT_ID, name: 'General' },
+      { id: CONFIG.GALLERY_FOLDER_ID, name: 'Gallery' }
+    ];
+    const visited = new Set();
+    let guard = 0;
+
+    while(queue.length && guard < 80){
+      guard++;
+      const folder = queue.shift();
+      if(visited.has(folder.id)) continue;
+      visited.add(folder.id);
+
+      const q = encodeURIComponent(`'${folder.id}' in parents and trashed=false`);
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType)&key=${CONFIG.DRIVE_API_KEY}`);
+      const children = (await res.json()).files || [];
+
+      const subfolders = children.filter(c => c.mimeType === 'application/vnd.google-apps.folder');
+      const docs = children.filter(c => c.mimeType !== 'application/vnd.google-apps.folder' && !c.mimeType.startsWith('image/') && c.mimeType !== 'text/plain');
+
+      if(docs.length > 0){ albums.push({ name: folder.name, files: docs }); }
+      subfolders.forEach(sf => queue.push({ id: sf.id, name: sf.name }));
+    }
+
+    if(albums.length === 0){
+      stateEl.innerHTML = '';
+      gridEl.innerHTML = `<div class="gallery-empty-banner">No documents found yet.</div>`;
+      return;
+    }
+    const totalFiles = albums.reduce((n,a) => n + a.files.length, 0);
+    stateEl.textContent = `${albums.length} folder${albums.length===1?'':'s'} · ${totalFiles} document${totalFiles===1?'':'s'} connected live from Google Drive`;
+    gridEl.innerHTML = '';
+    albums.forEach((album, i) => {
+      const card = document.createElement('button');
+      card.type = 'button'; card.className = 'doc-album'; card.style.transitionDelay = (i*70)+'ms';
+      card.innerHTML = `<svg class="folder-icon" viewBox="0 0 24 24" fill="none"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <h4>${album.name}</h4>
+        <span>${album.files.length} document${album.files.length===1?'':'s'}</span>`;
+      card.addEventListener('click', () => openDocAlbum(album.name, album.files));
+      gridEl.appendChild(card);
+      requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('shown')));
+    });
+  }catch(err){ stateEl.textContent = 'Could not load documents — check the Drive API key and folder sharing settings.'; console.error(err); }
+}
+loadDocuments();
+
+function openDocAlbum(albumName, files){
+  const overlay = document.getElementById('lightbox');
+  const titleEl = document.getElementById('lb-title');
+  const gridEl = document.getElementById('lb-grid');
+  const viewerEl = document.getElementById('lb-viewer');
+
+  titleEl.textContent = albumName;
+  viewerEl.classList.remove('active');
+  gridEl.classList.add('active', 'docs-mode');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  gridEl.innerHTML = '';
+  files.forEach(file => {
+    const kind = docKind(file.mimeType);
+    const card = document.createElement('button');
+    card.type = 'button'; card.className = 'doc-card shown';
+    card.innerHTML = `<div class="doc-icon ${kind}">${docLabel(kind)}</div>
+      <div class="doc-meta"><div class="doc-name">${file.name}</div><div class="doc-type">${docLabel(kind)}</div></div>`;
+    card.addEventListener('click', () => { closeLightbox(); openDocument(file.id, file.name); });
+    gridEl.appendChild(card);
+  });
+}
+
+function openDocument(fileId, name){
+  document.getElementById('dv-title').textContent = name;
+  document.getElementById('dv-frame').src = `https://drive.google.com/file/d/${fileId}/preview`;
+  document.getElementById('doc-viewer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDocViewer(){
+  document.getElementById('doc-viewer').classList.remove('open');
+  document.getElementById('dv-frame').src = '';
+  document.body.style.overflow = '';
+}
+document.getElementById('dv-close').addEventListener('click', closeDocViewer);
+document.getElementById('doc-viewer').addEventListener('click', (e) => { if(e.target.id === 'doc-viewer') closeDocViewer(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && document.getElementById('doc-viewer').classList.contains('open')) closeDocViewer(); });
+
+/* ---------------------------- LIGHTBOX (used by Documents album grid) ---------------------------- */
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lb-grid').classList.remove('docs-mode');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', (e) => { if(e.target.id === 'lightbox') closeLightbox(); });
+document.addEventListener('keydown', (e) => {
+  const overlay = document.getElementById('lightbox');
+  if(!overlay.classList.contains('open')) return;
+  if(e.key === 'Escape'){ closeLightbox(); }
+});
+
+/* stakeholders */
+const STAKEHOLDERS = [
+  { key:'companies', label:'Companies', commitments:['Pledge stickers inside premises; awareness cards to staff','Take responsibility for surrounding-area cleanliness','5S training for productivity and neatness, across all functions','Organise a singing/awareness programme','Keep and maintain roadside garbage bins for litter and paan spitting','Build and maintain public toilets, with an attendant'] },
+  { key:'colleges', label:'Educational Institutes', commitments:['Pledge stickers inside premises; awareness cards to students and parents','Take responsibility for surrounding-area cleanliness','5S training toward administrative excellence — for faculty, staff and students','Organise a singing/awareness programme','Offer internships in Social Engineering &amp; Management using Lean, Six Sigma'] },
+  { key:'holy', label:'Holy Places', commitments:['Stickers inside the premises, in lodging rooms, and on prasad packets','Prevent littering on roads during Wari/Yatra using portable collection bins','5S training to improve day-to-day operations','Organise a singing/awareness programme','Keep and maintain bins during yatras and warees'] },
+  { key:'transport', label:'Auto, Cab &amp; Associations', commitments:["Pledge stickers on the vehicle's front glass",'Take responsibility for surrounding-area cleanliness','5S lecture on neatness for passenger delight — via association meetings','Organise a singing/awareness programme'] },
+  { key:'hawkers', label:'Panwalas &amp; Hawkers', commitments:['Pledge stickers at the front of the stall','Take responsibility for surrounding-area cleanliness','5S lecture on hygienic surroundings — to attract more customers','Organise a singing/awareness programme','Keep bins near the stall for cigarette butts, spitting, and vegetable/paper waste'] },
+  { key:'shops', label:'Shops &amp; Associations', commitments:['Pledge stickers at the shop front','Take responsibility for surrounding-area cleanliness','5S lecture on hygienic surroundings — to attract more customers','Organise a singing/awareness programme'] },
+  { key:'transit', label:'Railway &amp; Bus Stations', commitments:['Pledge stickers inside the platform/cart areas'] },
+  { key:'municipal', label:'Municipal Corporation', commitments:['Appeal to newspaper distributors, flower shops and paan shops to avoid littering, and to maintain Nirmalya Kalash and spitting/cigarette bins','Appeal to shopkeepers to keep surroundings clean','Appoint voluntary ambassadors with authority to fine litterers in public places','Permit companies to install and maintain garbage bins, and build/maintain public toilets with an attendant','Support bins during yatras and warees'] },
+  { key:'pmo', label:'PMO', commitments:['National-level backing for a citizen-led, systems-based cleanliness movement'] }
+];
+function renderStakeholders(){
+  const tabsEl = document.getElementById('stake-tabs'), panelsEl = document.getElementById('stake-panels'), indicator = document.getElementById('stake-indicator');
+  const tabButtons = [];
+  STAKEHOLDERS.forEach((s,i) => {
+    const tab = document.createElement('button');
+    tab.className = 'stake-tab'+(i===0?' active':''); tab.type='button'; tab.innerHTML = s.label; tab.dataset.key = s.key;
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.stake-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.stake-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active'); document.getElementById('panel-'+s.key).classList.add('active');
+      moveIndicator(tab);
+    });
+    tabsEl.appendChild(tab); tabButtons.push(tab);
+    const panel = document.createElement('div');
+    panel.className = 'stake-panel'+(i===0?' active':''); panel.id = 'panel-'+s.key;
+    panel.innerHTML = `<h3>${s.label} — what's asked</h3><ul class="commit-list">${s.commitments.map((c,j)=>`<li style="animation-delay:${j*60}ms">${c}</li>`).join('')}</ul>`;
+    panelsEl.appendChild(panel);
+  });
+  function moveIndicator(tab){ indicator.style.left = tab.offsetLeft+'px'; indicator.style.width = tab.offsetWidth+'px'; }
+  moveIndicator(tabButtons[0]);
+  window.addEventListener('resize', () => moveIndicator(document.querySelector('.stake-tab.active')));
+}
+renderStakeholders();
+
+/* form */
+document.getElementById('signup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('form-msg'), form = e.target;
+  const data = Object.fromEntries(new FormData(form).entries());
+  if(!CONFIG.FORM_ENDPOINT){
+    msg.textContent = "Sign-up isn't connected yet — add your Apps Script Web App URL to CONFIG.FORM_ENDPOINT (see SETUP.md).";
+    msg.className = 'form-msg show warn'; return;
+  }
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true; submitBtn.textContent = 'Submitting…';
+  try{
+    await fetch(CONFIG.FORM_ENDPOINT, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(data) });
+    document.getElementById('form-fields').style.display = 'none';
+    document.getElementById('success-panel').classList.add('show');
+  }catch(err){
+    msg.textContent = 'Something went wrong sending this — please try again or WhatsApp us directly.';
+    msg.className = 'form-msg show warn'; console.error(err);
+  }finally{
+    submitBtn.disabled = false; submitBtn.textContent = 'Submit & Join the Mission';
+  }
+});
+</script>
+</body>
+</html>
