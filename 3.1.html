@@ -138,7 +138,7 @@
     background:transparent; cursor:pointer; color:var(--ink-soft); transition:color .2s ease; position:relative; z-index:2; }
   .stake-tab.active{ color:#fff; }
   .stake-tab:hover:not(.active){ color:var(--ink); }
-  #stake-indicator{ position:absolute; top:0; left:0; height:36px; border-radius:20px; background:var(--navy); transition:left .3s var(--ease), top .3s var(--ease), width .3s var(--ease); z-index:1; }
+  #stake-indicator{ position:absolute; height:36px; border-radius:20px; background:var(--navy); transition:left .3s var(--ease), width .3s var(--ease); z-index:1; }
   .stake-panel{ display:none; border:1px solid var(--line); border-top:none; border-radius:0 0 var(--radius) var(--radius); padding:30px; background:var(--surface); animation:panel-in .4s var(--ease); }
   .stake-panel.active{ display:block; }
   @keyframes panel-in{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
@@ -978,14 +978,8 @@ function renderStakeholders(){
     panel.innerHTML = `<h3>${s.label} — what's asked</h3><ul class="commit-list">${s.commitments.map((c,j)=>`<li style="animation-delay:${j*60}ms">${c}</li>`).join('')}</ul>`;
     panelsEl.appendChild(panel);
   });
-  function moveIndicator(tab){ indicator.style.left = tab.offsetLeft+'px'; indicator.style.top = tab.offsetTop+'px'; indicator.style.width = tab.offsetWidth+'px'; }
+  function moveIndicator(tab){ indicator.style.left = tab.offsetLeft+'px'; indicator.style.width = tab.offsetWidth+'px'; }
   moveIndicator(tabButtons[0]);
-  // Recalculate once web fonts finish loading and once everything (incl. layout) has settled —
-  // font-swap can shift tab widths/positions after this first calculation runs.
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(() => moveIndicator(document.querySelector('.stake-tab.active')));
-  }
-  window.addEventListener('load', () => moveIndicator(document.querySelector('.stake-tab.active')));
   window.addEventListener('resize', () => moveIndicator(document.querySelector('.stake-tab.active')));
 }
 renderStakeholders();
