@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swachha Sadak — स्वच्छ सड़क अभियान | Redesigned Edition</title>
+<link rel="icon" type="image/png" href="sl.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07110E;
+    --surface: #0E2019;
+    --surface-hover: #153026;
+    --border: rgba(46, 133, 94, 0.22);
+    --border-glow: rgba(56, 211, 131, 0.5);
+    
+    --text-main: #EDF7F2;
+    --text-muted: #94B5A4;
+    
+    --accent: #2EE68B;
+    --accent-glow: rgba(46, 230, 139, 0.25);
+    --cyan: #38BDF8;
+    --cyan-glow: rgba(56, 189, 248, 0.2);
+    
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+    --font-hindi: 'Noto Sans Devanagari', sans-serif;
+    
+    --radius-lg: 16px;
+    --radius-sm: 8px;
+    --maxw: 1240px;
+    --transition: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  .hi { font-family: var(--font-hindi); }
+
+  /* Background Ambient Glows */
+  .ambient-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(46, 230, 139, 0.08) 0%, transparent 70%);
+    top: -100px;
+    left: 20%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* Custom Scroll Progress Bar */
+  #route-progress { position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 1000; background: rgba(255,255,255,0.05); }
+  #route-progress .fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--cyan)); box-shadow: 0 0 12px var(--accent); }
+
+  /* Buttons */
+  .btn {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border-radius: 50px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #07110E;
+    cursor: pointer;
+    transition: transform 0.3s var(--transition), box-shadow 0.3s var(--transition), background 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px var(--accent-glow);
+    background: #45f79e;
+  }
+  .btn.ghost {
+    background: transparent;
+    color: var(--text-main);
+    border-color: var(--border);
+  }
+  .btn.ghost:hover {
+    background: var(--surface);
+    border-color: var(--accent);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  .btn.wa {
+    background: #25D366;
+    border-color: #25D366;
+    color: #06210F;
+  }
+  .btn.wa:hover {
+    background: #1ebe5a;
+    box-shadow: 0 10px 30px rgba(37,211,102,0.4);
+  }
+
+  /* Header / Navbar */
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: rgba(7, 17, 14, 0.82);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark { width: 40px; height: 40px; transition: transform 0.5s var(--transition); filter: drop-shadow(0 0 8px var(--accent-glow)); }
+  .brand:hover .brand-mark { transform: rotate(-15deg) scale(1.1); }
+  .brand-text { font-family: var(--font-heading); font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+  .brand-text b { color: var(--accent); } 
+  .brand-text i { font-style: normal; color: var(--cyan); }
+
+  nav.links { display: flex; gap: 32px; font-family: var(--font-heading); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+  nav.links a { color: var(--text-muted); transition: color 0.2s ease; position: relative; }
+  nav.links a:hover { color: var(--accent); }
+  nav.links a::after { content: ""; position: absolute; left: 0; bottom: -4px; width: 0; height: 2px; background: var(--accent); transition: width 0.3s var(--transition); }
+  nav.links a:hover::after { width: 100%; }
+
+  .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--text-main); }
+  .mobile-menu-btn svg { width: 28px; height: 28px; }
+
+  @media (max-width: 860px) {
+    .mobile-menu-btn { display: block; }
+    nav.links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--surface); flex-direction: column; padding: 28px;
+      gap: 20px; border-bottom: 1px solid var(--border); text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    nav.links.open { display: flex; animation: slide-down 0.3s var(--transition); }
+    @keyframes slide-down { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  }
+
+  /* Hero Section */
+  .hero { padding: 90px 0 70px; position: relative; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: center; }
+  @media (max-width: 960px) { .hero-grid { grid-template-columns: 1fr; text-align: center; justify-items: center; } }
+  
+  .eyebrow {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    background: rgba(46, 230, 139, 0.08);
+    border: 1px solid rgba(46, 230, 139, 0.2);
+    border-radius: 50px;
+    margin-bottom: 24px;
+  }
+  
+  .hero-logo-img { width: min(460px, 90vw); filter: drop-shadow(0 15px 35px rgba(0,0,0,0.5)); }
+  .hero p.lede { font-size: 19px; color: var(--text-muted); max-width: 560px; margin: 24px 0 36px; }
+  @media (max-width: 960px) { .hero p.lede { margin-left: auto; margin-right: auto; } }
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+  @media (max-width: 960px) { .hero-ctas { justify-content: center; } }
+
+  /* Holographic 3D Rings Core */
+  .hero-hologram { position: relative; width: 100%; max-width: 460px; aspect-ratio: 1; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
+  .holo-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px dashed rgba(46, 230, 139, 0.25); animation: spin-slow 25s linear infinite; }
+  .holo-ring.r2 { inset: 40px; border-style: solid; border-color: transparent var(--cyan) transparent var(--cyan); animation: spin-rev 18s linear infinite; }
+  .holo-ring.r3 { inset: 80px; border: 2px solid rgba(255,255,255,0.08); animation: spin-slow 30s linear infinite; }
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+  @keyframes spin-rev { to { transform: rotate(-360deg); } }
+  
+  .holo-core {
+    position: absolute; inset: 110px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--surface), #050d0a);
+    border: 1px solid var(--border-glow);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 0 30px rgba(46,230,139,0.15);
+    display: flex; align-items: center; justify-content: center; padding: 36px;
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .holo-core img { width: 100%; filter: drop-shadow(0 0 15px rgba(46,230,139,0.4)); }
+
+  /* Sections Layout */
+  section { padding: 100px 0; position: relative; }
+  section.tint { background-color: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  
+  .section-head { max-width: 700px; margin-bottom: 60px; }
+  .section-head h2 { font-family: var(--font-heading); font-size: clamp(32px, 4vw, 48px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; margin-top: 12px; }
+  .section-head p { color: var(--text-muted); font-size: 18px; margin-top: 16px; }
+
+  /* New Bento Card Styles */
+  .bento-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  @media (max-width: 840px) { .bento-grid { grid-template-columns: 1fr; } }
+
+  .bento-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s var(--transition), border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+  .bento-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 20px rgba(46,230,139,0.05);
+  }
+  .bento-card::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+    opacity: 0; transition: opacity 0.3s ease;
+  }
+  .bento-card:hover::before { opacity: 1; }
+  .bento-card h3 { font-family: var(--font-heading); font-size: 24px; font-weight: 600; margin: 16px 0 12px; color: var(--text-main); }
+  .bento-card p { color: var(--text-muted); font-size: 16px; margin: 0; }
+  .bento-tag {
+    font-family: var(--font-heading); font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--cyan); background: rgba(56,189,248,0.1);
+    padding: 4px 12px; border-radius: 4px; display: inline-block;
+  }
+
+  /* 3-Card Grid Style */
+  .cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .cards3 { grid-template-columns: 1fr; } }
+  
+  .card-glass {
+    background: rgba(14, 32, 25, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 36px 30px;
+    transition: transform 0.4s var(--transition), border-color 0.4s ease;
+  }
+  .card-glass:hover { transform: translateY(-6px); border-color: var(--cyan); }
+  .card-glass .icon { width: 44px; height: 44px; margin-bottom: 24px; color: var(--cyan); }
+  .card-glass h3 { font-family: var(--font-heading); font-size: 20px; font-weight: 600; margin-bottom: 12px; }
+  .card-glass p { color: var(--text-muted); font-size: 15px; margin: 0; }
+
+  /* Photo Carousels */
+  .gallery-state { font-family: var(--font-heading); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 20px; }
+  .carousel-wrap { position: relative; display: flex; align-items: center; gap: 16px; }
+  .carousel-track {
+    display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory;
+    scroll-behavior: smooth; padding: 10px 4px 24px; flex: 1; scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .carousel-track::-webkit-scrollbar { height: 6px; }
+  .carousel-track::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  .car-slide {
+    flex: none; width: 300px; scroll-snap-align: start; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden;
+    cursor: pointer; text-align: left; padding: 0; transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+  .car-slide:hover { transform: translateY(-6px); border-color: var(--accent); }
+  .car-slide img { width: 100%; height: 200px; object-fit: cover; }
+  .car-caption { padding: 16px; font-size: 13.5px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .car-arrow {
+    flex: none; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text-main); cursor: pointer; display: flex;
+    align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .car-arrow:hover { background: var(--accent); color: #07110E; border-color: var(--accent); transform: scale(1.08); }
+  @media (max-width: 768px) { .car-arrow { display: none; } }
+
+  /* Appeal Tabs System */
+  .stake-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; position: relative; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+  .stake-tab {
+    font-family: var(--font-heading); font-size: 13px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em; padding: 12px 20px; border: none; border-radius: 50px;
+    background: transparent; cursor: pointer; color: var(--text-muted); transition: color 0.2s ease;
+    position: relative; z-index: 2;
+  }
+  .stake-tab.active { color: #07110E; }
+  #stake-indicator {
+    position: absolute; top: 0; left: 0; height: 44px; border-radius: 50px;
+    background: var(--accent); transition: left 0.3s var(--transition), top 0.3s var(--transition), width 0.3s var(--transition); z-index: 1;
+  }
+  .stake-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; animation: fade-in 0.4s var(--transition); }
+  .stake-panel.active { display: block; }
+  @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .stake-panel h3 { font-family: var(--font-heading); font-size: 24px; font-weight: 600; margin-bottom: 20px; color: var(--text-main); }
+  
+  .commit-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .commit-list li { padding-left: 28px; position: relative; color: var(--text-muted); font-size: 16px; }
+  .commit-list li::before { content: "✦"; position: absolute; left: 0; color: var(--accent); font-size: 12px; top: 2px; }
+
+  /* Partner Cards Grid */
+  .partner-ctas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 32px; }
+  @media (max-width: 768px) { .partner-ctas { grid-template-columns: 1fr; } }
+  .partner-cta {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+  .partner-cta:hover { transform: translateY(-4px); border-color: var(--cyan); }
+  .partner-cta h4 { font-family: var(--font-heading); font-size: 18px; font-weight: 600; margin: 0 0 8px; color: var(--text-main); }
+  .partner-cta p { font-size: 15px; color: var(--text-muted); margin: 0; }
+
+  /* Join Modal Overlay */
+  #join-modal {
+    position: fixed; inset: 0; z-index: 1100; display: none; align-items: center; justify-content: center;
+    padding: 24px; background: rgba(5, 13, 10, 0.85); backdrop-filter: blur(8px);
+  }
+  #join-modal.open { display: flex; animation: fade-in 0.3s ease; }
+  .join-modal-panel {
+    position: relative; width: min(720px, 100%); max-height: 90vh; overflow-y: auto;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6); padding: 40px;
+  }
+  #join-modal-close {
+    position: absolute; top: 24px; right: 24px; width: 40px; height: 40px; border: 1px solid var(--border);
+    border-radius: 50%; background: var(--bg); color: var(--text-main); font-size: 22px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+  }
+  #join-modal-close:hover { background: var(--accent); color: #07110E; border-color: var(--accent); }
+  body.join-modal-open { overflow: hidden; }
+
+  /* Form Styling */
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-family: var(--font-heading); font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 8px; }
+  .field input, .field textarea {
+    width: 100%; font-family: var(--font-body); font-size: 16px; padding: 14px 18px;
+    border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text-main);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); outline: none; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+
+  .success-panel { display: none; text-align: center; padding: 30px 0; }
+  .success-panel.show { display: block; animation: fade-in 0.4s ease; }
+  .check { width: 64px; height: 64px; border-radius: 50%; background: var(--accent); color: #07110E; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+  .check svg { width: 32px; height: 32px; stroke: #07110E; }
+  .form-msg { font-family: var(--font-heading); font-size: 13px; margin-top: 14px; display: none; align-items: center; gap: 8px; }
+  .form-msg.show { display: flex; } .form-msg.warn { color: #f87171; }
+
+  /* Floating Action Button */
+  #fab-join {
+    position: fixed; right: 28px; bottom: 28px; z-index: 950; display: flex; align-items: center; gap: 10px;
+    padding: 16px 24px; border-radius: 50px; background: var(--accent); color: #07110E; text-decoration: none;
+    font-family: var(--font-heading); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    box-shadow: 0 15px 30px var(--accent-glow); opacity: 0; transform: translateY(20px) scale(0.9); pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease;
+  }
+  #fab-join.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  #fab-join:hover { background: #45f79e; transform: translateY(-2px); }
+
+  /* Lightbox & Document Viewers */
+  #photo-viewer, #doc-viewer, #lightbox {
+    position: fixed; inset: 0; z-index: 1200; background: rgba(5, 13, 10, 0.92); backdrop-filter: blur(10px);
+    display: none; align-items: center; justify-content: center; flex-direction: column; padding: 30px;
+  }
+  #photo-viewer.open, #doc-viewer.open, #lightbox.open { display: flex; animation: fade-in 0.25s ease; }
+  
+  .pv-stage, .lb-viewer-stage { position: relative; display: flex; align-items: center; justify-content: center; max-width: 90vw; }
+  #photo-viewer img, #lightbox img { max-width: 85vw; max-height: 75vh; border-radius: var(--radius-sm); box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
+  #pv-close, #dv-close, #lb-close { position: absolute; top: 24px; right: 28px; background: none; border: none; color: var(--text-main); font-size: 32px; cursor: pointer; transition: color 0.2s; }
+  #pv-close:hover, #dv-close:hover, #lb-close:hover { color: var(--accent); }
+  #pv-prev, #pv-next, .lb-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); background: rgba(14,32,25,0.8); color: var(--text-main);
+    border: 1px solid var(--border); width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s, border-color 0.2s;
+  }
+  #pv-prev:hover, #pv-next:hover, .lb-arrow:hover { background: var(--accent); color: #07110E; border-color: var(--accent); }
+  #pv-prev { left: -60px; } #pv-next { right: -60px; }
+  #pv-caption { color: var(--text-muted); font-family: var(--font-heading); font-size: 14px; margin-top: 20px; text-align: center; }
+
+  .dv-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); width: min(1000px, 100%); height: min(85vh, 900px); display: flex; flex-direction: column; overflow: hidden; }
+  .dv-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--border); font-family: var(--font-heading); font-weight: 600; font-size: 16px; }
+  #dv-frame { flex: 1; width: 100%; border: none; background: var(--bg); }
+
+  /* Footer */
+  footer { background: #040A08; border-top: 1px solid var(--border); padding: 80px 0 40px; margin-top: 60px; }
+  .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; margin-bottom: 50px; }
+  @media (max-width: 768px) { .foot-grid { grid-template-columns: 1fr; } }
+  .foot-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .foot-brand img { width: 36px; filter: drop-shadow(0 0 6px var(--accent-glow)); }
+  footer h4 { font-family: var(--font-heading); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 16px; }
+  footer p, footer a { font-size: 15px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  footer nav a:hover { color: var(--accent); }
+  .foot-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-family: var(--font-heading); font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+
+<div id="route-progress"><div class="fill"></div></div>
+<div class="ambient-glow"></div>
+
+<header class="site">
+  <div class="navbar">
+    <a class="brand" href="#top">
+      <img class="brand-mark" src="sl.png" alt="Swachha Sadak logo">
+      <span class="brand-text"><b>Swachha</b> <i>Sadak</i></span>
+    </a>
+    <nav class="links">
+      <a href="#about">About</a>
+      <a href="#recognition">Recognitions</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#appeal">Appeal</a>
+      <a href="#pledge">Pledge</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a class="btn ghost join-trigger" href="#join-modal" style="padding: 10px 20px; font-size: 12px;">Join Mission</a>
+      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Sigma Consultants Initiative</div>
+        <img class="hero-logo-img" src="bl.png" alt="Swachha Sadak — स्वच्छ सड़क अभियान">
+        <p class="lede">A Clean Road is the ultimate reflection of a disciplined, progressive nation. Building robust citizen-led operational systems to end public littering once and for all.</p>
+        <div class="hero-ctas">
+          <a href="#join-modal" class="btn join-trigger">Become an Associate</a>
+          <a href="#appeal" class="btn ghost">Explore Partnership</a>
+        </div>
+      </div>
+      <div class="hero-hologram" aria-hidden="true">
+        <div class="holo-ring r1"></div>
+        <div class="holo-ring r2"></div>
+        <div class="holo-ring r3"></div>
+        <div class="holo-core"><img src="sl.png" alt=""></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section id="about" class="tint">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Core Mission</div>
+        <h2>Establish absolute cleanliness on public roads and spaces.</h2>
+        <p class="hi" style="font-size: 18px; color: var(--cyan);">भारत मे आम सडक और अन्य जगहों मे स्वच्छता प्रस्थापित करे</p>
+      </div>
+      <div class="bento-grid">
+        <div class="bento-card">
+          <span class="bento-tag">Pillar 01</span>
+          <h3>Appeal 📢</h3>
+          <p>Prevent garbage generation like empty cigarette packs, paper, and spitting on public roads through direct, emotionally grounded conversations and impact leaflets right where litter happens[cite: 1].</p>
+          <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+            <p class="hi" style="font-size: 14.5px; color: var(--text-muted);">लोगों को सार्वजनिक सड़कों पर सिगरेट के खाली पैकेट, कागज़ और थूक जैसी गंदगी फैलाने से रोकें — सीधे और भावनात्मक बातचीत तथा पर्चों के माध्यम से जागरूकता पैदा करें[cite: 1].</p>
+          </div>
+        </div>
+        <div class="bento-card">
+          <span class="bento-tag">Pillar 02</span>
+          <h3>System ⚙️</h3>
+          <p>Appeal to municipal authorities and large corporations to fund, place, and maintain small garbage-collection bins — complete with dedicated attendants — on public thoroughfares[cite: 1].</p>
+          <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+            <p class="hi" style="font-size: 14.5px; color: var(--text-muted);">महानगरपालिका प्रशासन और बड़ी कंपनियों से अपील करें कि वे सार्वजनिक सड़कों पर छोटे कूड़ेदान लगाने, धन उपलब्ध कराने और नियमित रखरखाव के साथ परिचारक नियुक्त करने की व्यवस्था करें[cite: 1].</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 36px;" data-section-docs="About"></div>
+    </div>
+  </section>
+
+  <!-- ================= RECOGNITIONS ================= -->
+  <section id="recognition">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Honors</div>
+        <h2>Recognitions &amp; Tributes</h2>
+        <p>Certificates, appreciation letters, and official honors received during the campaign progress.</p>
+      </div>
+      <div id="rec-carousel-state" class="gallery-state">Loading recognition archive...</div>
+      <div class="carousel-wrap">
+        <button type="button" id="rec-car-prev" class="car-arrow car-arrow-left" aria-label="Scroll left">&#10094;</button>
+        <div class="carousel-track" id="rec-carousel-track"></div>
+        <button type="button" id="rec-car-next" class="car-arrow car-arrow-right" aria-label="Scroll right">&#10095;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BENEFITS ================= -->
+  <section class="tint" id="benefits">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Impact</div>
+        <h2>Cleanliness is the gateway to a healthier, happier world.</h2>
+        <p>Public spaces demonstrate a nation's core discipline. Three structural reasons why this mission matters:</p>
+      </div>
+      <div class="cards3">
+        <div class="card-glass">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.5-9-9.5C1.5 6.5 5 3 8.5 4.5 10 5.2 11 7 12 8c1-1 2-2.8 3.5-3.5C19 3 22.5 6.5 21 11.5 19 16.5 12 21 12 21Z"/></svg>
+          <h3>Public Health</h3>
+          <p>Fewer waste deposits on streets eliminate disease breeding grounds and secure safe pathways for daily life[cite: 1].</p>
+        </div>
+        <div class="card-glass">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c4 3 7 7 7 11a7 7 0 1 1-14 0c0-4 3-8 7-11Z"/></svg>
+          <h3>Environment</h3>
+          <p>Litter-free corridors prevent plastics and pollutants from clogging urban drainage systems and soil beds[cite: 1].</p>
+        </div>
+        <div class="card-glass">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/></svg>
+          <h3>Economy &amp; Pride</h3>
+          <p>Sanitized public spaces elevate global positioning, stimulate tourism, and strengthen civic self-esteem[cite: 1].</p>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 36px;" data-section-docs="Benefits"></div>
+  </section>
+
+  <!-- ================= GALLERY ================= -->
+  <section id="gallery">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Field Archive</div>
+        <h2>Drives &amp; Operations Gallery</h2>
+        <p>Real visual logs from clean-up drives, 5S orientations, and street-level interventions.</p>
+      </div>
+      <div id="gal-carousel-state" class="gallery-state">Loading gallery archive...</div>
+      <div class="carousel-wrap">
+        <button type="button" id="gal-car-prev" class="car-arrow car-arrow-left" aria-label="Scroll left">&#10094;</button>
+        <div class="carousel-track" id="gal-carousel-track"></div>
+        <button type="button" id="gal-car-next" class="car-arrow car-arrow-right" aria-label="Scroll right">&#10095;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= APPEAL ================= -->
+  <section class="tint" id="appeal">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Stakeholders</div>
+        <h2>Targeted Action Framework</h2>
+        <p>Specific commitments requested from each civic group to enforce clean systems.</p>
+      </div>
+      <div class="stake-tabs" id="stake-tabs"><div id="stake-indicator"></div></div>
+      <div id="stake-panels"></div>
+      
+      <div class="partner-ctas">
+        <div class="partner-cta">
+          <h4>For Industries &amp; Corporations</h4>
+          <p>Sponsor pledge cards, stickers, 5S training modules, and public sanitation bins through corporate social responsibility (CSR) initiatives[cite: 1].</p>
+        </div>
+        <div class="partner-cta">
+          <h4>For Colleges &amp; Schools</h4>
+          <p>Host student pledge drives, 5S workshops, and cultural awareness programs with active faculty participation[cite: 1].</p>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 36px;" data-section-docs="Appeal"></div>
+  </section>
+
+  <!-- ================= PLEDGE ================= -->
+  <section id="pledge">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Commitment</div>
+        <h2>Pledge</h2>
+        <p class="hi" style="font-size: 18px; color: var(--cyan);">भारत मे आम सडक और अन्य जगहों मे स्वच्छता प्रस्थापित करे</p>
+      </div>
+      <div class="bento-grid">
+        <div class="bento-card">
+          <span class="bento-tag">संकल्प</span>
+          <h3>हमारा संकल्प</h3>
+          <p style="font-size: 18px; font-weight: 500; color: var(--text-main);">सार्वजनिक स्थान पर कोई गंदगी नहीं।<br>हर अपशिष्ट केवल निर्धारित स्थान पर[cite: 1]!</p>
+        </div>
+        <div class="bento-card">
+          <span class="bento-tag">Pledge</span>
+          <h3>Our Pledge</h3>
+          <p style="font-size: 18px; font-weight: 500; color: var(--text-main);">Zero littering in public places.<br>Dispose of all waste only in designated areas[cite: 1].</p>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 36px;" data-section-docs="Pledge"></div>
+  </section>
+</main>
+
+<a id="fab-join" class="join-trigger" href="#join-modal"><span>Join Us</span></a>
+
+<!-- ================= JOIN MODAL ================= -->
+<div id="join-modal" role="dialog" aria-modal="true" aria-labelledby="join-modal-title">
+  <div class="join-modal-panel">
+    <button type="button" id="join-modal-close" aria-label="Close">&times;</button>
+    <div id="join">
+      <form class="signup" id="signup-form">
+        <div id="form-fields">
+          <div class="eyebrow" id="join-modal-title" style="margin-bottom:20px;">Associate Registry</div>
+          <div class="field"><label for="f-name">Organization / Full Name</label>
+            <input id="f-name" name="orgOrName" required placeholder="e.g. Sigma Consultants or Asha Patil"></div>
+          <div class="field"><label for="f-address">Address</label>
+            <input id="f-address" name="address" required placeholder="Street address or locality"></div>
+          <div class="field-row">
+            <div class="field"><label for="f-city">City / Country</label>
+              <input id="f-city" name="cityCountry" required placeholder="Pune, India"></div>
+            <div class="field"><label for="f-details">Occupation Details</label>
+              <input id="f-details" name="details" placeholder="Engineer, Student, Corporate Professional..."></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="f-email">Email ID</label>
+              <input id="f-email" name="email" type="email" required placeholder="you@gmail.com"></div>
+            <div class="field"><label for="f-phone">Phone Number</label>
+              <input id="f-phone" name="phone" type="tel" required placeholder="+91"></div>
+          </div>
+          <div class="field"><label for="f-whatsapp">WhatsApp Number</label>
+            <input id="f-whatsapp" name="whatsapp" type="tel" placeholder="+91 98231 90939"></div>
+          <div class="field"><label for="f-heard">How did you hear about Swachha Sadak?</label>
+            <input id="f-heard" name="howHeard" placeholder="Friend, Social Media, Event"></div>
+          <div class="field"><label for="f-interest">Interested Contribution Area</label>
+            <textarea id="f-interest" name="interest" rows="3" placeholder="Share your suggestions or how you wish to engage"></textarea></div>
+          <button class="btn" type="submit" style="width:100%; justify-content:center;">Submit &amp; Join Mission</button>
+          <div class="form-msg" id="form-msg"></div>
+        </div>
+
+        <div class="success-panel" id="success-panel">
+          <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg></div>
+          <h3>Registration Successful!</h3>
+          <p style="color:var(--text-muted); margin-bottom:24px;">Welcome aboard as an official Associate. Join our live community coordination group below.</p>
+          <a class="btn wa" id="wa-cta" href="https://chat.whatsapp.com/HeVz3s5FB8UFUo5JkeLGk6" target="_blank" rel="noopener">
+            Join WhatsApp Community Group
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PHOTO VIEWER MODAL ================= -->
+<div id="photo-viewer" role="dialog" aria-modal="true">
+  <button type="button" id="pv-close" aria-label="Close">&times;</button>
+  <div class="pv-stage">
+    <button type="button" id="pv-prev" aria-label="Previous">&#10094;</button>
+    <img id="pv-img" src="" alt="">
+    <button type="button" id="pv-next" aria-label="Next">&#10095;</button>
+  </div>
+  <div id="pv-caption"></div>
+</div>
+
+<!-- ================= DOCUMENT VIEWER MODAL ================= -->
+<div id="doc-viewer" role="dialog" aria-modal="true">
+  <div class="dv-panel">
+    <div class="dv-head">
+      <span id="dv-title"></span>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <a id="dv-download" class="btn" style="padding:6px 16px; font-size:12px;" href="" target="_blank" rel="noopener">Download File</a>
+        <button type="button" id="dv-close" aria-label="Close">&times;</button>
+      </div>
+    </div>
+    <iframe id="dv-frame" src="" title="Document Preview"></iframe>
+  </div>
+</div>
+
+<!-- ================= LIGHTBOX GALLERY MODAL ================= -->
+<div id="lightbox" role="dialog" aria-modal="true">
+  <div class="dv-panel" style="max-width:900px;">
+    <div class="dv-head">
+      <span id="lb-title">Archive Folder</span>
+      <button type="button" id="lb-close" aria-label="Close">&times;</button>
+    </div>
+    <div id="lb-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; padding:24px; overflow-y:auto; max-height:75vh;"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><img src="sl.png" alt="Logo"> <span style="font-family:var(--font-heading); font-size:18px; font-weight:700;">Swachha Sadak</span></div>
+        <p style="max-width:360px; margin-bottom:20px;">"Clean Roads. Responsible Citizens. Stronger Nation." A citizens' operational mission led by Er. Dhananjay Apte under Sigma Consultants.</p>
+        <p style="font-family:var(--font-heading); font-size:12px; letter-spacing:0.1em; color:var(--cyan);">www.swachhasadak.in</p>
+      </div>
+      <div>
+        <h4>Mission Navigation</h4>
+        <nav style="display:grid; gap:8px;">
+          <a href="#about">About Core Goals</a>
+          <a href="#recognition">Recognitions & Honors</a>
+          <a href="#gallery">Drive & Field Galleries</a>
+          <a href="#appeal">Stakeholder Commitments</a>
+          <a href="#pledge">Official Pledge</a>
+        </nav>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Sigma Consultants — Swachha Sadak Mission</span>
+      <span>Quality Management · Lean Operations · Six Sigma Excellence</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const CONFIG = {
+  DRIVE_API_KEY: 'AIzaSyDI6UBuJpo9QIuBi5O2XmgvtV6iL5P0-c8',
+  GALLERY_FOLDER_ID: '1hqEunaltlz4l4qoFIWzXA4jqRbU9Xz6M',
+  RECOGNITION_FOLDER_ID: '1MuURVn9J85x50ish7OXUmhMQN2HCPiH2',
+  FORM_ENDPOINT: 'https://script.google.com/macros/s/AKfycbyqaGguZ8ntdNfUQz1IDvL0lg303Xp5sRtIKOGGv4Rb6eFbneNPC2N1BWNlJpJDyEcz/exec'
+};
+const DOCS_ROOT_ID = '1ILPw1ejDbzOYA7bHYU8JY88W8gEIxMi3';
+
+/* Mobile menu toggle */
+const mobileBtn = document.getElementById('mobile-menu-btn');
+const navLinks = document.querySelector('nav.links');
+if(mobileBtn && navLinks){
+  mobileBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+}
+
+/* Scroll progress bar */
+const fillEl = document.querySelector('#route-progress .fill');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop || document.body.scrollTop;
+  const height = h.scrollHeight - h.clientHeight;
+  fillEl.style.width = (height > 0 ? (scrolled / height) * 100 : 0) + '%';
+}, { passive: true });
+
+/* FAB visibility */
+const fab = document.getElementById('fab-join');
+const heroEl = document.querySelector('.hero');
+if(heroEl && fab){
+  const observer = new IntersectionObserver(([entry]) => fab.classList.toggle('visible', !entry.isIntersecting), { threshold: 0 });
+  observer.observe(heroEl);
+}
+
+/* Photo carousels handler */
+let allViewerImages = [];
+let pvIndex = 0;
+
+function baseName(name){ return name.replace(/\.[^.]+$/, '').trim().toLowerCase(); }
+
+async function fetchFolderPhotos(folderId){
+  if(!CONFIG.DRIVE_API_KEY || !folderId) return [];
+  const queue = [folderId];
+  const visited = new Set();
+  let images = [], texts = [], guard = 0;
+
+  while(queue.length && guard < 50){
+    guard++;
+    const currId = queue.shift();
+    if(visited.has(currId)) continue;
+    visited.add(currId);
+
+    try {
+      const q = encodeURIComponent(`'${currId}' in parents and trashed=false`);
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType,thumbnailLink)&pageSize=100&key=${CONFIG.DRIVE_API_KEY}`);
+      const children = (await res.json()).files || [];
+      children.forEach(c => {
+        if(c.mimeType === 'application/vnd.google-apps.folder') queue.push(c.id);
+        else if(c.mimeType?.startsWith('image/')) images.push({ ...c, parentId: currId });
+        else if(c.mimeType === 'text/plain') texts.push({ ...c, parentId: currId });
+      });
+    } catch(e){ console.error(e); }
+  }
+
+  const textMap = {};
+  texts.forEach(t => { textMap[t.parentId + '::' + baseName(t.name)] = t; });
+
+  return await Promise.all(images.map(async (img) => {
+    const match = textMap[img.parentId + '::' + baseName(img.name)];
+    let description = '';
+    if(match){
+      try {
+        const r = await fetch(`https://www.googleapis.com/drive/v3/files/${match.id}?alt=media&key=${CONFIG.DRIVE_API_KEY}`);
+        description = (await r.text()).trim();
+      } catch(e){}
+    }
+    return { ...img, description };
+  }));
+}
+
+async function initPhotoCarousel(folderId, stateElId, trackElId, prevId, nextId, label){
+  const stateEl = document.getElementById(stateElId);
+  const track = document.getElementById(trackElId);
+  if(!stateEl || !track) return;
+
+  if(!CONFIG.DRIVE_API_KEY){
+    stateEl.textContent = `${label} requires a valid API key.`;
+    return;
+  }
+
+  try {
+    stateEl.textContent = `Loading ${label.toLowerCase()} archive...`;
+    const photos = await fetchFolderPhotos(folderId);
+    if(photos.length === 0){
+      stateEl.textContent = `No photos found in ${label} folder.`;
+      return;
+    }
+    stateEl.textContent = `${photos.length} item${photos.length===1?'':'s'} synchronized live from Drive`;
+    track.innerHTML = '';
+
+    const startIdx = allViewerImages.length;
+    photos.forEach((file, i) => {
+      allViewerImages.push(file);
+      const globalIdx = startIdx + i;
+      const slide = document.createElement('button');
+      slide.type = 'button';
+      slide.className = 'car-slide';
+      slide.innerHTML = `<img src="${file.thumbnailLink?.replace('=s220','=s600') || ''}" alt="${file.name}" loading="lazy"><div class="car-caption">${file.description || file.name}</div>`;
+      slide.addEventListener('click', () => openPhotoViewer(globalIdx, startIdx, startIdx + photos.length));
+      track.appendChild(slide);
+    });
+
+    const pBtn = document.getElementById(prevId), nBtn = document.getElementById(nextId);
+    if(pBtn) pBtn.addEventListener('click', () => track.scrollBy({ left: -320, behavior: 'smooth' }));
+    if(nBtn) nBtn.addEventListener('click', () => track.scrollBy({ left: 320, behavior: 'smooth' }));
+  } catch(e){
+    stateEl.textContent = `Error loading ${label.toLowerCase()}.`;
+    console.error(e);
+  }
+}
+
+(async function(){
+  let recId = CONFIG.RECOGNITION_FOLDER_ID;
+  if(!recId || recId.startsWith('YOUR_')){
+    try {
+      const q = encodeURIComponent(`'${CONFIG.GALLERY_FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&key=${CONFIG.DRIVE_API_KEY}`);
+      const folders = (await res.json()).files || [];
+      const match = folders.find(f => f.name.toLowerCase().includes('recognition'));
+      if(match) recId = match.id;
+    } catch(e){}
+  }
+  initPhotoCarousel(recId, 'rec-carousel-state', 'rec-carousel-track', 'rec-car-prev', 'rec-car-next', 'Recognitions');
+})();
+initPhotoCarousel(CONFIG.GALLERY_FOLDER_ID, 'gal-carousel-state', 'gal-carousel-track', 'gal-car-prev', 'gal-car-next', 'Gallery');
+
+let pvStart = 0, pvEnd = 0;
+function openPhotoViewer(idx, start, end){
+  pvStart = start; pvEnd = end;
+  document.getElementById('photo-viewer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  showPvImage(idx);
+}
+function showPvImage(idx){
+  const len = pvEnd - pvStart;
+  if(len <= 0) return;
+  pvIndex = pvStart + (((idx - pvStart) % len) + len) % len;
+  const file = allViewerImages[pvIndex];
+  document.getElementById('pv-img').src = file.thumbnailLink?.replace('=s220','=s1600') || '';
+  document.getElementById('pv-caption').textContent = `${file.description ? file.description + ' — ' : ''}${(pvIndex - pvStart) + 1} of ${len}`;
+}
+function closePhotoViewer(){
+  document.getElementById('photo-viewer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('pv-close').addEventListener('click', closePhotoViewer);
+document.getElementById('pv-prev').addEventListener('click', () => showPvImage(pvIndex - 1));
+document.getElementById('pv-next').addEventListener('click', () => showPvImage(pvIndex + 1));
+document.getElementById('photo-viewer').addEventListener('click', (e) => { if(e.target.id === 'photo-viewer') closePhotoViewer(); });
+
+/* Document loader for section-specific folders */
+async function loadSectionDocs(){
+  if(!CONFIG.DRIVE_API_KEY) return;
+  try {
+    const queue = [{ id: DOCS_ROOT_ID, name: 'General' }, { id: CONFIG.GALLERY_FOLDER_ID, name: 'Gallery' }];
+    const visited = new Set();
+    let albums = [];
+    while(queue.length){
+      const folder = queue.shift();
+      if(visited.has(folder.id)) continue;
+      visited.add(folder.id);
+      const q = encodeURIComponent(`'${folder.id}' in parents and trashed=false`);
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType)&key=${CONFIG.DRIVE_API_KEY}`);
+      const children = (await res.json()).files || [];
+      const subs = children.filter(c => c.mimeType === 'application/vnd.google-apps.folder');
+      const docs = children.filter(c => c.mimeType !== 'application/vnd.google-apps.folder' && !c.mimeType.startsWith('image/') && c.mimeType !== 'text/plain');
+      if(docs.length > 0) albums.push({ name: folder.name, files: docs });
+      subs.forEach(s => queue.push({ id: s.id, name: s.name }));
+    }
+
+    document.querySelectorAll('[data-section-docs]').forEach(sec => {
+      const name = sec.getAttribute('data-section-docs').toLowerCase();
+      const match = albums.find(a => a.name.toLowerCase().includes(name));
+      if(match){
+        sec.innerHTML = `
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+            <div>
+              <div class="eyebrow" style="margin-bottom:6px;">Attached Folder</div>
+              <h4 style="font-family:var(--font-heading); font-size:18px; margin:0;">${match.name} Resources</h4>
+              <p style="color:var(--text-muted); font-size:14px; margin:4px 0 0;">${match.files.length} document file${match.files.length===1?'':'s'} available for review.</p>
+            </div>
+            <button type="button" class="btn ghost" onclick='openDocAlbum("${match.name}", ${JSON.stringify(match.files).replace(/'/g, "&apos;")})'>Browse Files</button>
+          </div>`;
+      }
+    });
+  } catch(e){ console.error(e); }
+}
+loadSectionDocs();
+
+function openDocAlbum(name, files){
+  document.getElementById('lb-title').textContent = `${name} Files`;
+  const grid = document.getElementById('lb-grid');
+  grid.innerHTML = '';
+  files.forEach(f => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.style.cssText = 'background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:16px; text-align:left; cursor:pointer; color:var(--text-main); font-family:var(--font-heading);';
+    btn.innerHTML = `<div style="font-weight:600; font-size:14px; margin-bottom:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${f.name}</div><span style="font-size:11px; color:var(--accent); text-transform:uppercase;">View Document</span>`;
+    btn.addEventListener('click', () => { closeLightbox(); openDocViewer(f.id, f.name); });
+    grid.appendChild(btn);
+  });
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function openDocViewer(id, name){
+  document.getElementById('dv-title').textContent = name;
+  document.getElementById('dv-frame').src = `https://drive.google.com/file/d/${id}/preview`;
+  document.getElementById('dv-download').href = `https://drive.google.com/uc?export=download&id=${id}`;
+  document.getElementById('doc-viewer').classList.add('open');
+}
+function closeDocViewer(){ document.getElementById('doc-viewer').classList.remove('open'); document.getElementById('dv-frame').src = ''; }
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('dv-close').addEventListener('click', closeDocViewer);
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+
+/* Stakeholders tabs */
+const STAKEHOLDERS = [
+  { key:'companies', label:'Companies', commitments:['Pledge stickers inside premises; awareness cards to staff[cite: 1]','Take responsibility for surrounding-area cleanliness[cite: 1]','5S training for productivity and neatness, across all functions[cite: 1]','Organise a singing/awareness programme[cite: 1]','Keep and maintain roadside garbage bins for litter and paan spitting[cite: 1]','Build and maintain public toilets, with an attendant[cite: 1]'] },
+  { key:'colleges', label:'Educational Institutes', commitments:['Pledge stickers inside premises; awareness cards to students and parents[cite: 1]','Take responsibility for surrounding-area cleanliness[cite: 1]','5S training toward administrative excellence — for faculty, staff and students[cite: 1]','Organise a singing/awareness programme[cite: 1]','Offer internships in Social Engineering & Management using Lean, Six Sigma[cite: 1]'] },
+  { key:'holy', label:'Holy Places', commitments:['Stickers inside premises, in lodging rooms, and on prasad packets[cite: 1]','Prevent littering on roads during Wari/Yatra using portable collection bins[cite: 1]','5S training to improve day-to-day operations[cite: 1]','Organise a singing/awareness programme[cite: 1]','Keep and maintain bins during yatras and warees[cite: 1]'] },
+  { key:'transport', label:'Auto, Cab & Associations', commitments:["Pledge stickers on the vehicle's front glass[cite: 1]",'Take responsibility for surrounding-area cleanliness[cite: 1]','5S lecture on neatness for passenger delight — via association meetings[cite: 1]','Organise a singing/awareness programme[cite: 1]'] },
+  { key:'hawkers', label:'Panwalas & Hawkers', commitments:['Pledge stickers at the front of the stall[cite: 1]','Take responsibility for surrounding-area cleanliness[cite: 1]','5S lecture on hygienic surroundings — to attract more customers[cite: 1]','Organise a singing/awareness programme[cite: 1]','Keep bins near the stall for cigarette butts, spitting, and vegetable/paper waste[cite: 1]'] },
+  { key:'shops', label:'Shops & Associations', commitments:['Pledge stickers at the shop front[cite: 1]','Take responsibility for surrounding-area cleanliness[cite: 1]','5S lecture on hygienic surroundings — to attract more customers[cite: 1]','Organise a singing/awareness programme[cite: 1]'] },
+  { key:'transit', label:'Railway & Bus Stations', commitments:['Pledge stickers inside the platform/cart areas[cite: 1]'] },
+  { key:'municipal', label:'Municipal Corporation', commitments:['Appeal to newspaper distributors, flower shops and paan shops to avoid littering[cite: 1]','Appeal to shopkeepers to keep surroundings clean[cite: 1]','Appoint voluntary ambassadors with authority to fine litterers[cite: 1]','Permit companies to install and maintain garbage bins and public toilets[cite: 1]','Support bins during yatras and warees[cite: 1]'] },
+  { key:'pmo', label:'PMO', commitments:['National-level backing for a citizen-led, systems-based cleanliness movement[cite: 1]'] }
+];
+
+function renderStakeholders(){
+  const tabsEl = document.getElementById('stake-tabs');
+  const panelsEl = document.getElementById('stake-panels');
+  const indicator = document.getElementById('stake-indicator');
+  if(!tabsEl || !panelsEl) return;
+
+  const buttons = [];
+  STAKEHOLDERS.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'stake-tab' + (i === 0 ? ' active' : '');
+    btn.textContent = s.label;
+    btn.addEventListener('click', () => {
+      tabsEl.querySelectorAll('.stake-tab').forEach(t => t.classList.remove('active'));
+      panelsEl.querySelectorAll('.stake-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + s.key).classList.add('active');
+      moveInd(btn);
+    });
+    tabsEl.appendChild(btn);
+    buttons.push(btn);
+
+    const panel = document.createElement('div');
+    panel.className = 'stake-panel' + (i === 0 ? ' active' : '');
+    panel.id = 'panel-' + s.key;
+    panel.innerHTML = `<h3>${s.label} — Core Commitments</h3><ul class="commit-list">${s.commitments.map(c => `<li>${c}</li>`).join('')}</ul>`;
+    panelsEl.appendChild(panel);
+  });
+
+  function moveInd(b){
+    indicator.style.left = b.offsetLeft + 'px';
+    indicator.style.top = b.offsetTop + 'px';
+    indicator.style.width = b.offsetWidth + 'px';
+  }
+  setTimeout(() => moveInd(buttons[0]), 50);
+  window.addEventListener('resize', () => moveInd(tabsEl.querySelector('.stake-tab.active')));
+}
+renderStakeholders();
+
+/* Join Modal & Signup Form */
+const modal = document.getElementById('join-modal');
+document.querySelectorAll('.join-trigger').forEach(btn => {
+  btn.addEventListener('click', (e) => { e.preventDefault(); modal.classList.add('open'); document.body.classList.add('join-modal-open'); });
+});
+document.getElementById('join-modal-close').addEventListener('click', () => { modal.classList.remove('open'); document.body.classList.remove('join-modal-open'); });
+
+document.getElementById('signup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const msg = document.getElementById('form-msg');
+  const data = Object.fromEntries(new FormData(form).entries());
+  if(!CONFIG.FORM_ENDPOINT){
+    msg.textContent = "Form endpoint not configured.";
+    msg.className = 'form-msg show warn'; return;
+  }
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true; submitBtn.textContent = 'Submitting...';
+  try {
+    await fetch(CONFIG.FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(data) });
+    document.getElementById('form-fields').style.display = 'none';
+    document.getElementById('success-panel').classList.add('show');
+  } catch(err){
+    msg.textContent = 'Submission failed. Please try again via WhatsApp.';
+    msg.className = 'form-msg show warn';
+  } finally {
+    submitBtn.disabled = false; submitBtn.textContent = 'Submit & Join Mission';
+  }
+});
+</script>
+</body>
+</html>

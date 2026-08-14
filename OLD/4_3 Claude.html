@@ -58,12 +58,7 @@ header.site{ position:sticky; top:7px; z-index:90; background:rgba(233,227,211,.
   border-bottom:3px solid var(--navy); box-shadow:0 1px 0 var(--yellow); }
 .navbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 28px; max-width:var(--maxw); margin:0 auto; }
 .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
-.brand-mark{
-  width:auto;
-  height:55px;
-  max-width:none;
-  display:block;
-}
+.brand-mark{ width:34px; height:34px; transition:transform .5s var(--ease); }
 .brand:hover .brand-mark{ transform:rotate(-8deg) scale(1.06); }
 .brand-text{ font-family:var(--display); font-size:19px; letter-spacing:.03em; }
 .brand-text b{ color:var(--red); } .brand-text i{ font-style:normal; color:var(--navy); }
@@ -83,61 +78,37 @@ nav.links a:hover::after{ right:0; }
 }
 
 /* ---------------- hero: the road ---------------- */
- .hero{
-  padding:76px 0 46px;
-  position:relative;
-  overflow:hidden;
-  background:#FFFFFF !important;
-  color:#17141A;
-}
-.hero::before{
-  display:block;
-  content:"";
-  position:absolute;
-  inset:0;
-  background:#FFFFFF !important;
-  opacity:1 !important;
-}
-.hero::after{
-  display:none !important;
-}
+.hero{ padding:76px 0 46px; position:relative; overflow:hidden; background:var(--navy) url('Opening picture.png') center/cover no-repeat; background-attachment:fixed; color:#F3EEDD; }
+.hero::before{ content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(135deg, rgba(23,21,26,.7) 0%, rgba(23,21,26,.5) 50%, rgba(23,21,26,.7) 100%),
+    repeating-linear-gradient(90deg, transparent 0 158px, rgba(242,183,5,.08) 158px 160px);
+  opacity:1; }
+.hero::after{ content:""; position:absolute; left:50%; bottom:-4px; width:6px; height:120%; transform:translateX(-50%) skewX(-8deg);
+  background:repeating-linear-gradient(180deg, var(--yellow) 0 26px, transparent 26px 52px); opacity:.55; }
 .hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center; position:relative; z-index:2; }
 @media (max-width:940px){ .hero-grid{ grid-template-columns:1fr; } }
 .hero-eyebrow{ color:var(--yellow); }
 .hero-eyebrow::before{ background:repeating-linear-gradient(90deg,var(--yellow) 0 6px, transparent 6px 10px); }
 .hero h1.wordmark{ font-size:0; margin:6px 0 22px; }
 .hero-logo-img{ width:min(420px,86vw); filter:drop-shadow(0 18px 30px rgba(0,0,0,.5)); }
-.hero p.lede{ font-size:18.5px; color:var(--ink-soft); max-width:520px; margin:0 0 30px; }
+.hero p.lede{ font-size:18.5px; color:rgba(243,238,221,.82); max-width:520px; margin:0 0 30px; }
 .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:46px; }
-.hero-stats{ display:grid; grid-template-columns:repeat(3,1fr); border-top:1px dashed var(--line); padding-top:20px; max-width:600px; }
+.hero-stats{ display:grid; grid-template-columns:repeat(3,1fr); border-top:1px dashed rgba(243,238,221,.3); padding-top:20px; max-width:600px; }
 .hero-stats b{ display:block; font-family:var(--display); font-size:28px; color:var(--yellow); }
-.hero-stats span{ font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; }
+.hero-stats span{ font-family:var(--mono); font-size:11px; color:rgba(243,238,221,.6); text-transform:uppercase; letter-spacing:.05em; }
 
-/* Hero right side image */
-.hero-image{
-  position:relative;
-  z-index:2;
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-}
-.hero-image img{
-  width:100%;
-  max-width:850px;
-  height:auto;
-  display:block;
-  border-radius:12px;
-  filter:drop-shadow(0 25px 45px rgba(0,0,0,.45));
-  transition:transform .5s var(--ease);
-}
-.hero-image img:hover{
-  transform:scale(1.02);
-}
-@media (max-width:940px){
-  .hero-image{ justify-content:center; }
-  .hero-image img{ max-width:700px; }
-}
+.hero-rings{ position:relative; aspect-ratio:1/1; max-width:440px; margin:0 auto; }
+.ring{ position:absolute; inset:0; border-radius:50%; border:3px dashed transparent; }
+.ring.r1{ border-top-color:var(--yellow); border-right-color:var(--yellow); animation:spin 20s linear infinite; }
+.ring.r2{ inset:34px; border-bottom-color:#F3EEDD; border-left-color:#F3EEDD; animation:spin 15s linear infinite reverse; opacity:.6; }
+.ring.r3{ inset:68px; border-top-color:var(--red); border-left-color:var(--red); animation:spin 24s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.hero-rings .core{ position:absolute; inset:96px; border-radius:50%; background:var(--surface); box-shadow:0 24px 54px -18px rgba(0,0,0,.55), inset 0 0 0 4px var(--navy); display:flex; align-items:center; justify-content:center; padding:22px; }
+.hero-rings .core img{ width:100%; animation:float 6s ease-in-out infinite; mix-blend-mode:multiply; filter:contrast(1.15); }
+@keyframes float{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+@media (prefers-reduced-motion: reduce){ .ring{ animation:none; } .hero-rings .core img{ animation:none; } }
+@media (max-width:940px){ .hero-rings{ max-width:280px; } }
 
 /* ---------------- sections ---------------- */
 section{ padding:88px 0; position:relative; }
@@ -154,6 +125,8 @@ section.diag::before{ content:""; position:absolute; top:0; left:0; right:0; hei
 .pillar{ background:var(--surface); border:1px solid var(--line); border-top:6px solid var(--navy); border-radius:var(--radius); padding:30px 26px 26px; position:relative; overflow:hidden;
   transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-top-color .3s ease; counter-increment:pillar; }
 .pillar:hover{ transform:translateY(-6px) rotate(-.4deg); box-shadow:0 26px 46px -26px rgba(23,20,15,.45); border-top-color:var(--red); }
+.pillar::before{ content:"ROUTE 0" counter(pillar); position:absolute; top:14px; right:14px; font-family:var(--mono); font-weight:600; font-size:10px; letter-spacing:.06em;
+  color:var(--navy); background:var(--yellow); padding:4px 8px; border-radius:20px; }
 .pillar h3{ font-size:21px; text-transform:none; letter-spacing:0; color:var(--navy); margin:18px 0 10px; position:relative; font-family:var(--body); font-weight:700; }
 .pillar p{ color:var(--ink-soft); font-size:15.5px; position:relative; }
 
@@ -409,6 +382,7 @@ footer nav a{ transition:color .2s ease; } footer nav a:hover{ color:var(--yello
   <div class="navbar">
     <a class="brand" href="#top">
       <img class="brand-mark" src="sl.png" alt="Swachha Sadak logo">
+      <span class="brand-text"><b>Swachha</b> <i>Sadak</i></span>
     </a>
     <nav class="links">
       <a href="#about">About</a><!-- <a href="#recognition">Recognitions</a> --><a href="#gallery">Gallery</a><!-- <a href="#documents">Docs</a> --><a href="#appeal">Appeal</a><a href="#pledge">Pledge</a>
@@ -426,6 +400,13 @@ footer nav a{ transition:color .2s ease; } footer nav a:hover{ color:var(--yello
 
   <!-- ================= HERO ================= -->
   <section class="hero">
+    <svg aria-hidden="true" style="position:absolute; left:0; right:0; bottom:0; width:100%; height:46%; opacity:.5; z-index:1;" viewBox="0 0 1160 300" preserveAspectRatio="none">
+      <path d="M0 300 L470 0 L690 0 L1160 300 Z" fill="#201D22"/>
+      <path d="M560 0 L580 0 L510 300 L470 300 Z" fill="none"/>
+      <g stroke="#F2B705" stroke-width="6" stroke-dasharray="18 22">
+        <path d="M580 0 L560 300" />
+      </g>
+    </svg>
     <div class="wrap hero-grid">
       <div>
         <div class="eyebrow hero-eyebrow">Sigma Consultants presents a citizen mission</div>
@@ -441,8 +422,9 @@ footer nav a{ transition:color .2s ease; } footer nav a:hover{ color:var(--yello
           <div><b class="count" data-count="30" data-suffix="+ yrs">0</b><span>Lean &amp; Quality Legacy</span></div>
         </div> -->
       </div>
-      <div class="hero-image">
-        <img src="Opening picture.png" alt="Swachha Sadak Transformation">
+      <div class="hero-rings" aria-hidden="true">
+        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+        <div class="core"><img src="sl.png" alt=""></div>
       </div>
     </div>
   </section>

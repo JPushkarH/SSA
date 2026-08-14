@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swachha Sadak — स्वच्छ सड़क अभियान (3.13 Gemini)</title>
+<link rel="icon" type="image/png" href="sl.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== FRESH COLOURS & RESET ===== */
+  :root {
+    --bg: #f6f9fc;
+    --surface: rgba(255,255,255,0.72);
+    --surface-solid: #ffffff;
+    --glass: rgba(255,255,255,0.5);
+    --glass-border: rgba(255,255,255,0.3);
+    --text: #0a192f;
+    --text-soft: #2c3e50;
+    --primary: #6c63ff;
+    --primary-light: #8b83ff;
+    --secondary: #00d2ff;
+    --accent: #ff6b6b;
+    --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+    --shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
+    --radius: 20px;
+    --maxw: 1200px;
+    --font: 'Inter', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --dev: 'Noto Sans Devanagari', sans-serif;
+    --ease: cubic-bezier(0.22, 0.68, 0, 1.01);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .hi { font-family: var(--dev); }
+  h1,h2,h3,h4 { font-weight: 700; line-height: 1.2; margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 24px;
+    height: 2px;
+    background: var(--gradient);
+    display: inline-block;
+    border-radius: 2px;
+  }
+  ::selection { background: var(--primary); color: #fff; }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-family: var(--font);
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s var(--ease);
+    text-decoration: none;
+    background: var(--gradient);
+    color: #fff;
+    box-shadow: 0 8px 20px -6px rgba(108, 99, 255, 0.4);
+  }
+  .btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 14px 28px -8px rgba(108, 99, 255, 0.5);
+  }
+  .btn.ghost {
+    background: transparent;
+    color: var(--text);
+    box-shadow: none;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .btn.ghost:hover {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+  .btn.wa {
+    background: #25d366;
+    box-shadow: 0 8px 20px -6px rgba(37,211,102,0.4);
+  }
+  .btn.wa:hover { background: #1ebe5a; }
+
+  /* ===== SCROLL PROGRESS ===== */
+  #route-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 200;
+    background: rgba(0,0,0,0.06);
+  }
+  #route-progress .fill {
+    height: 100%;
+    width: 0%;
+    background: var(--gradient);
+    transition: width 0.08s linear;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* ===== REVEAL ANIMATIONS ===== */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+  }
+  [data-reveal].in { opacity: 1; transform: translateY(0); }
+  [data-reveal-stagger] > * {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  }
+  [data-reveal-stagger].in > * { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal], [data-reveal-stagger] > * { opacity: 1 !important; transform: none !important; transition: none !important; }
+  }
+
+  /* ===== NAV ===== */
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    background: rgba(246, 249, 252, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 28px;
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .brand-mark { width: 36px; height: 36px; transition: transform 0.4s var(--ease); }
+  .brand:hover .brand-mark { transform: rotate(-8deg) scale(1.1); }
+  .brand-text b { color: var(--primary); }
+  .brand-text i { font-style: normal; color: var(--text-soft); }
+  nav.links {
+    display: flex;
+    gap: 28px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  nav.links a {
+    position: relative;
+    padding-bottom: 4px;
+    transition: color 0.2s;
+  }
+  nav.links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 100%;
+    bottom: 0;
+    height: 2px;
+    background: var(--gradient);
+    transition: right 0.3s var(--ease);
+  }
+  nav.links a:hover::after { right: 0; }
+  .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .mobile-menu-btn svg { width: 26px; height: 26px; stroke: var(--text); stroke-width: 2; }
+  @media (max-width: 820px) {
+    .mobile-menu-btn { display: block; }
+    nav.links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(246,249,252,0.96);
+      backdrop-filter: blur(12px);
+      flex-direction: column;
+      padding: 24px 28px;
+      gap: 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1);
+    }
+    nav.links.open { display: flex; animation: slideDown 0.3s var(--ease); }
+    @keyframes slideDown { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
+    .navbar .btn.ghost { padding: 8px 14px; font-size: 12px; }
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 80px 0 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: -40%;
+    right: -20%;
+    width: 80%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(108,99,255,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 48px;
+    align-items: center;
+    position: relative;
+  }
+  @media (max-width: 940px) { .hero-grid { grid-template-columns: 1fr; } }
+  .hero-logo-img { width: min(480px, 90vw); margin-bottom: 8px; }
+  .hero p.lede {
+    font-size: 18px;
+    color: var(--text-soft);
+    max-width: 520px;
+    margin: 16px 0 28px;
+  }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px; }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding-top: 20px;
+    max-width: 500px;
+  }
+  .hero-stats b {
+    display: block;
+    font-size: 28px;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-stats span { font-family: var(--mono); font-size: 11px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .hero-orb {
+    position: relative;
+    aspect-ratio: 1/1;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  .orb-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid transparent;
+  }
+  .orb-ring.r1 {
+    border-top-color: var(--primary);
+    border-right-color: var(--secondary);
+    animation: spin 18s linear infinite;
+  }
+  .orb-ring.r2 {
+    inset: 30px;
+    border-bottom-color: var(--secondary);
+    border-left-color: var(--primary);
+    animation: spin 14s linear infinite reverse;
+  }
+  .orb-ring.r3 {
+    inset: 60px;
+    border-top-color: var(--accent);
+    border-left-color: var(--accent);
+    animation: spin 22s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .orb-core {
+    position: absolute;
+    inset: 90px;
+    border-radius: 50%;
+    background: var(--surface-solid);
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .orb-core img {
+    width: 100%;
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @media (prefers-reduced-motion: reduce) { .orb-ring, .orb-core img { animation: none; } }
+  @media (max-width: 940px) { .hero-orb { max-width: 280px; } }
+
+  /* ===== SECTIONS ===== */
+  section {
+    padding: 80px 0;
+    position: relative;
+  }
+  section.tint { background: var(--surface-solid); }
+  section.diag::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--surface-solid);
+    clip-path: polygon(0 100%, 100% 0, 100% 100%);
+  }
+  .section-head {
+    max-width: 660px;
+    margin-bottom: 48px;
+  }
+  .section-head h2 {
+    font-size: clamp(30px, 4.5vw, 48px);
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .section-head p {
+    color: var(--text-soft);
+    margin-top: 12px;
+    font-size: 17px;
+  }
+
+  /* ===== CARDS (glass) ===== */
+  .pillars, .cards3 {
+    display: grid;
+    gap: 24px;
+  }
+  .pillars { grid-template-columns: repeat(3,1fr); }
+  .cards3 { grid-template-columns: repeat(3,1fr); }
+  @media (max-width: 900px) { .pillars, .cards3 { grid-template-columns: 1fr; } }
+
+  .pillar, .card {
+    background: var(--glass);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 32px;
+    transition: all 0.4s var(--ease);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px -12px rgba(0,0,0,0.08);
+  }
+  .pillar:hover, .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 48px -16px rgba(108, 99, 255, 0.2);
+    border-color: var(--primary);
+  }
+  .pillar::before, .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease);
+  }
+  .pillar:hover::before, .card:hover::before { transform: scaleX(1); }
+  .pillar h3, .card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .pillar p, .card p { color: var(--text-soft); font-size: 15px; }
+  .pillar .icon, .card .icon { width: 36px; height: 36px; margin-bottom: 16px; }
+
+  /* ===== CAROUSEL ===== */
+  .carousel-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .carousel-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding: 6px 2px 16px;
+    flex: 1;
+    scrollbar-width: thin;
+  }
+  .carousel-track::-webkit-scrollbar { height: 6px; }
+  .carousel-track::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 8px; }
+  .car-slide {
+    flex: none;
+    width: 260px;
+    scroll-snap-align: start;
+    background: var(--surface-solid);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s var(--ease);
+    box-shadow: 0 6px 16px -8px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .car-slide:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 40px -16px rgba(108,99,255,0.2);
+  }
+  .car-slide img { width: 100%; height: 180px; object-fit: cover; }
+  .car-caption {
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-soft);
+    line-height: 1.5;
+  }
+  .car-arrow {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.06);
+    background: var(--surface-solid);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px -6px rgba(0,0,0,0.05);
+  }
+  .car-arrow:hover {
+    background: var(--primary);
+    color: #fff;
+    transform: scale(1.05);
+  }
+  @media (max-width: 640px) { .car-arrow { display: none; } }
+  .gallery-state {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-bottom: 16px;
+  }
+
+  /* ===== STAKEHOLDER TABS ===== */
+  .stake-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    padding-bottom: 12px;
+    position: relative;
+  }
+  .stake-tab {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 30px;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-soft);
+    transition: color 0.2s;
+    position: relative;
+    z-index: 2;
+  }
+  .stake-tab.active { color: #fff; }
+  .stake-tab:hover:not(.active) { color: var(--text); }
+  #stake-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 38px;
+    border-radius: 30px;
+    background: var(--gradient);
+    transition: left 0.3s var(--ease), width 0.3s var(--ease);
+    z-index: 1;
+  }
+  .stake-panel {
+    display: none;
+    border: 1px solid rgba(0,0,0,0.04);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 32px;
+    background: var(--surface-solid);
+    animation: panelIn 0.4s var(--ease);
+  }
+  .stake-panel.active { display: block; }
+  @keyframes panelIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+  .stake-panel h3 { font-size: 20px; margin-bottom: 14px; color: var(--text); }
+  .commit-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .commit-list li {
+    padding-left: 24px;
+    position: relative;
+    color: var(--text-soft);
+    font-size: 15px;
+    opacity: 0;
+    animation: liIn 0.4s var(--ease) forwards;
+  }
+  .commit-list li::before {
+    content: "▹";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+  }
+  @keyframes liIn { to { opacity: 1; } }
+
+  .partner-ctas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+  @media (max-width: 640px) { .partner-ctas { grid-template-columns: 1fr; } }
+  .partner-cta {
+    background: var(--glass);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: all 0.3s var(--ease);
+  }
+  .partner-cta:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 12px 28px -12px rgba(108,99,255,0.15);
+  }
+  .partner-cta h4 { font-size: 16px; margin-bottom: 6px; }
+  .partner-cta p { font-size: 14px; color: var(--text-soft); }
+
+  /* ===== DOCUMENT CARDS (new style) ===== */
+  .docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+    gap: 16px;
+  }
+  .doc-album {
+    background: var(--glass);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.4s var(--ease);
+    text-align: left;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .doc-album.shown { opacity: 1; transform: translateY(0); }
+  .doc-album:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: var(--primary);
+    box-shadow: 0 16px 32px -12px rgba(108,99,255,0.15);
+  }
+  .doc-album .folder-icon { width: 32px; height: 32px; color: var(--primary); margin-bottom: 12px; }
+  .doc-album h4 { font-size: 16px; margin-bottom: 4px; }
+  .doc-album span { font-family: var(--mono); font-size: 11px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .doc-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface-solid);
+    border: 1px solid rgba(0,0,0,0.04);
+    border-radius: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.3s var(--ease);
+    width: 100%;
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .doc-card.shown { opacity: 1; transform: translateY(0); }
+  .doc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+    border-color: var(--primary);
+  }
+  .doc-icon {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .doc-icon.pdf { background: #e74c3c; }
+  .doc-icon.doc { background: #3498db; }
+  .doc-icon.ppt { background: #e67e22; }
+  .doc-icon.sheet { background: #2ecc71; }
+  .doc-icon.other { background: #95a5a6; }
+  .doc-name { font-weight: 600; font-size: 14px; line-height: 1.3; }
+  .doc-type { font-family: var(--mono); font-size: 10px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ===== LIGHTBOX & VIEWERS ===== */
+  #lightbox, #photo-viewer, #doc-viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  #lightbox.open, #photo-viewer.open, #doc-viewer.open { display: flex; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  .lb-panel, .dv-panel {
+    background: var(--surface-solid);
+    border-radius: var(--radius);
+    max-height: 90vh;
+    width: min(980px, 100%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 30px 70px -20px rgba(0,0,0,0.4);
+  }
+  .lb-head, .dv-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    font-weight: 600;
+    font-size: 16px;
+  }
+  #lb-close, #dv-close, #pv-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--text-soft);
+    transition: color 0.2s;
+  }
+  #lb-close:hover, #dv-close:hover, #pv-close:hover { color: var(--text); }
+  .lb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px,1fr));
+    gap: 12px;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .lb-grid.active { display: grid; }
+  .lb-grid.docs-mode { grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); }
+  .lb-thumb {
+    border: none;
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 1/1;
+    cursor: pointer;
+    transition: transform 0.3s var(--ease);
+  }
+  .lb-thumb:hover { transform: scale(1.04); }
+  .lb-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .lb-viewer {
+    display: none;
+    flex-direction: column;
+    padding: 24px;
+  }
+  .lb-viewer.active { display: flex; }
+  .lb-back {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--primary);
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+  .lb-viewer-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border-radius: 8px;
+    min-height: 300px;
+  }
+  .lb-viewer-stage img, #photo-viewer img {
+    max-width: 90vw;
+    max-height: 70vh;
+    border-radius: 8px;
+  }
+  .lb-arrow, #pv-prev, #pv-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.3s;
+  }
+  .lb-arrow:hover, #pv-prev:hover, #pv-next:hover { background: var(--primary); }
+  .lb-arrow-left, #pv-prev { left: 12px; }
+  .lb-arrow-right, #pv-next { right: 12px; }
+  .lb-caption, #pv-caption {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-soft);
+    text-align: center;
+    margin-top: 14px;
+  }
+  .dv-panel iframe { flex: 1; border: none; background: var(--bg); }
+
+  /* ===== JOIN MODAL ===== */
+  #join-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(6px);
+  }
+  #join-modal.open { display: flex; animation: fadeIn 0.25s ease; }
+  .join-modal-panel {
+    background: var(--surface-solid);
+    border-radius: var(--radius);
+    max-height: 92vh;
+    overflow-y: auto;
+    width: min(760px, 100%);
+    padding: 24px;
+    box-shadow: 0 30px 70px -20px rgba(0,0,0,0.4);
+  }
+  #join-modal-close {
+    float: right;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--text-soft);
+  }
+  #join-modal-close:hover { color: var(--text); }
+  form.signup { margin: 0; }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-soft);
+    margin-bottom: 6px;
+  }
+  .field input, .field textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 12px;
+    font-family: var(--font);
+    font-size: 15px;
+    background: var(--bg);
+    transition: border 0.3s;
+  }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+  }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 520px) { .field-row { grid-template-columns: 1fr; } }
+  .success-panel {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .success-panel.show { display: block; animation: fadeIn 0.5s var(--ease); }
+  .check {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .check svg { width: 28px; height: 28px; stroke: #fff; stroke-width: 2; }
+  .form-msg { font-family: var(--mono); font-size: 13px; margin-top: 12px; display: none; }
+  .form-msg.show { display: flex; align-items: center; gap: 8px; }
+  .form-msg.warn { color: #e74c3c; }
+
+  /* ===== FAB ===== */
+  #fab-join {
+    position: fixed;
+    right: 24px;
+    bottom: 28px;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 24px 14px 20px;
+    border-radius: 60px;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+    box-shadow: 0 16px 34px -12px rgba(108,99,255,0.5);
+    opacity: 0;
+    transform: translateY(16px) scale(0.9);
+    pointer-events: none;
+    transition: all 0.4s var(--ease);
+  }
+  #fab-join.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+  #fab-join:hover { background: var(--primary-light); transform: translateY(-4px) scale(1.02); }
+  #fab-join .pulse {
+    position: absolute;
+    inset: -2px;
+    border-radius: 60px;
+    border: 2px solid var(--primary-light);
+    animation: pulseRing 2s ease-out infinite;
+  }
+  @keyframes pulseRing {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.3); opacity: 0; }
+  }
+  #fab-join .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--text);
+    color: rgba(255,255,255,0.8);
+    padding: 60px 0 30px;
+    margin-top: 20px;
+  }
+  .foot-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 760px) { .foot-grid { grid-template-columns: 1fr; } }
+  .foot-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .foot-brand img { width: 40px; filter: brightness(0) invert(1); }
+  .foot-brand span { font-weight: 700; font-size: 18px; color: #fff; }
+  footer h4 { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); margin-bottom: 14px; }
+  footer p, footer a { font-size: 14px; color: rgba(255,255,255,0.7); }
+  footer nav a { display: block; margin-bottom: 8px; transition: color 0.2s; }
+  footer nav a:hover { color: var(--secondary); }
+  .foot-bottom {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+  }
+</style>
+</head>
+<body>
+
+<div id="route-progress"><div class="fill"></div></div>
+
+<header class="site">
+  <div class="navbar">
+    <a class="brand" href="#top">
+      <img class="brand-mark" src="sl.png" alt="Swachha Sadak logo">
+      <span class="brand-text"><b>Swachha</b> <i>Sadak</i></span>
+    </a>
+    <nav class="links">
+      <a href="#about">About</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#appeal">Appeal</a>
+      <a href="#pledge">Pledge</a>
+    </nav>
+    <div style="display:flex; align-items:center;">
+      <a class="btn ghost join-trigger" href="#join-modal" style="padding:8px 18px; font-size:13px;">Join</a>
+      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Menu">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Sigma Consultants presents</div>
+        <img class="hero-logo-img" src="bl.png" alt="Swachha Sadak — स्वच्छ सड़क अभियान">
+        <p class="lede">A Clean Road is the ultimate reflection of a disciplined, progressive nation. We're building citizen-led systems — not just awareness — to end littering on India's public roads.</p>
+        <div class="hero-ctas">
+          <!-- <a href="#join-modal" class="btn join-trigger">Become an Associate</a> -->
+        </div>
+        <!-- <div class="hero-stats">
+          <div><b class="count" data-count="3">0</b><span>Pillars</span></div>
+          <div><b class="count" data-count="9">0</b><span>Stakeholders</span></div>
+          <div><b class="count" data-count="30" data-suffix="+ yrs">0</b><span>Legacy</span></div>
+        </div> -->
+      </div>
+      <div class="hero-orb" aria-hidden="true">
+        <div class="orb-ring r1"></div>
+        <div class="orb-ring r2"></div>
+        <div class="orb-ring r3"></div>
+        <div class="orb-core"><img src="sl.png" alt=""></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="tint diag">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Goal</div>
+        <h2>Establish cleanliness on public roads and places in India.</h2>
+        <p class="hi" style="font-size:16px;">भारत मे आम सडक और अन्य जगहों मे स्वच्छता प्रस्थापित करे</p>
+      </div>
+      <div class="pillars" data-reveal-stagger>
+        <div class="pillar"><h3>Appeal 📢</h3>
+          <p>Prevent people from generating garbage like empty cigarette packs, paper, spit on public roads, through direct, emotionally grounded conversations and leaflets, right where littering happens.</p></div>
+        <div class="pillar"><h3>System ⚙️</h3>
+          <p>Appeal to municipal authorities and large corporations to fund, place, and maintain small garbage-collection bins — with an attendant — on public roads.</p></div>
+      </div>
+      <div class="pillars" data-reveal-stagger>
+        <div class="pillar"><h3>आवाहन 📢</h3>
+          <p>लोगों को सार्वजनिक सड़कों पर सिगरेट के खाली पैकेट, कागज़ और थूक जैसी गंदगी फैलाने से रोकें — जहाँ लोग कूड़ा फैलाते हैं, वहीं सीधे और भावनात्मक रूप से प्रभावशाली बातचीत तथा पर्चों के माध्यम से जागरूकता पैदा करें।</p></div>
+        <div class="pillar"><h3>व्यवस्था ⚙️</h3>
+          <p>महानगरपालिका प्रशासन और बड़ी कंपनियों से अपील करें कि वे सार्वजनिक सड़कों पर छोटे कूड़ेदान लगाने, उनके लिए धन उपलब्ध कराने और उनका नियमित रखरखाव सुनिश्चित करें — साथ ही उनकी देखरेख के लिए एक परिचारक भी नियुक्त करें।</p></div>
+      </div>
+      <div class="wrap" style="margin-top:28px;" data-section-docs="About"></div>
+    </div>
+  </section>
+
+  <section class="tint diag" id="recognition">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Recognitions</div>
+        <h2>Recognitions &amp; Honors</h2>
+        <p>Certificates, appreciation letters, and official honors received during the Swachha Sadak campaign.</p>
+      </div>
+      <div id="rec-carousel-state" class="gallery-state">Loading recognition photos…</div>
+      <div class="carousel-wrap">
+        <button type="button" id="rec-car-prev" class="car-arrow car-arrow-left">&#10094;</button>
+        <div class="carousel-track" id="rec-carousel-track"></div>
+        <button type="button" id="rec-car-next" class="car-arrow car-arrow-right">&#10095;</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="benefits">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Benefits</div>
+        <h2>Cleanliness is a key to a healthier, happier world.</h2>
+        <p>Public spaces are where a nation's discipline becomes visible. Three reasons this mission is worth the effort:</p>
+      </div>
+      <div class="cards3" data-reveal-stagger>
+        <div class="card"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-9-9.5C1.5 6.5 5 3 8.5 4.5 10 5.2 11 7 12 8c1-1 2-2.8 3.5-3.5C19 3 22.5 6.5 21 11.5 19 16.5 12 21 12 21Z" stroke="#6c63ff" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <h3>Public health</h3><p>Less waste on roads means fewer breeding grounds for disease and safer streets for daily life.</p></div>
+        <div class="card"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M12 3c4 3 7 7 7 11a7 7 0 1 1-14 0c0-4 3-8 7-11Z" stroke="#00d2ff" stroke-width="1.8"/></svg>
+          <h3>Environment</h3><p>Litter-free roads mean less plastic and waste entering drains, soil, and eventually water systems.</p></div>
+        <div class="card"><svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 20V10l8-6 8 6v10" stroke="#ff6b6b" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 20v-6h6v6" stroke="#ff6b6b" stroke-width="1.8"/></svg>
+          <h3>Economy &amp; pride</h3><p>Cleaner public spaces enhance India's global image, improve tourism, and strengthen civic pride.</p></div>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:28px;" data-section-docs="Benefits"></div>
+  </section>
+
+  <section class="tint diag" id="gallery">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Gallery</div>
+        <h2>Drives &amp; Campaign Photos</h2>
+        <p>Photos from clean-up drives, awareness sessions, 5S events, and field operations.</p>
+      </div>
+      <div id="gal-carousel-state" class="gallery-state">Loading gallery photos…</div>
+      <div class="carousel-wrap">
+        <button type="button" id="gal-car-prev" class="car-arrow car-arrow-left">&#10094;</button>
+        <div class="carousel-track" id="gal-carousel-track"></div>
+        <button type="button" id="gal-car-next" class="car-arrow car-arrow-right">&#10095;</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="appeal">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Appeal</div>
+        <h2>Appeal</h2>
+      </div>
+      <div class="stake-tabs" id="stake-tabs"><div id="stake-indicator"></div></div>
+      <div id="stake-panels"></div>
+      <div class="partner-ctas">
+        <div class="partner-cta"><h4>For Industries &amp; Companies</h4><p>Sponsor pledge cards, stickers, 5S training, and public bins/toilets through your CSR programme.</p></div>
+        <div class="partner-cta"><h4>For Colleges &amp; Schools</h4><p>Run pledge drives, 5S sessions, and "Singing with Lean Management" events with students and faculty.</p></div>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:28px;" data-section-docs="Appeal"></div>
+  </section>
+
+  <section id="pledge" class="tint diag">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="eyebrow">Our Pledge</div>
+        <h2>Pledge</h2>
+        <p class="hi" style="font-size:16px;">भारत मे आम सडक और अन्य जगहों मे स्वच्छता प्रस्थापित करे</p>
+      </div>
+      <div class="pillars" data-reveal-stagger>
+        <div class="pillar"><h3>हमारा संकल्प</h3>
+          <p>सार्वजनिक स्थान पर कोई गंदगी नहीं।<br>हर अपशिष्ट केवल निर्धारित स्थान पर।</p></div>
+        <div class="pillar"><h3>Our Pledge</h3>
+          <p>Zero littering in public places.<br>Dispose of all waste only in designated areas.</p></div>
+      </div>
+      <div class="wrap" style="margin-top:28px;" data-section-docs="Pledge"></div>
+    </div>
+  </section>
+</main>
+
+<a id="fab-join" class="join-trigger" href="#join-modal"><span class="pulse"></span><span class="dot"></span> Join Us</a>
+
+<!-- ===== MODALS ===== -->
+<div id="join-modal" role="dialog" aria-modal="true">
+  <div class="join-modal-panel">
+    <button type="button" id="join-modal-close">&times;</button>
+    <form class="signup" id="signup-form">
+      <div id="form-fields">
+        <div class="eyebrow" style="margin-bottom:20px;">Associate Sign-Up</div>
+        <div class="field"><label for="f-name">Business/Organization full name — OR individual name</label>
+          <input id="f-name" name="orgOrName" required placeholder="e.g. Sigma Consultants"></div>
+        <div class="field"><label for="f-address">Address</label>
+          <input id="f-address" name="address" required placeholder="Street, area"></div>
+        <div class="field-row">
+          <div class="field"><label for="f-city">City / Country</label>
+            <input id="f-city" name="cityCountry" required placeholder="Pune, India"></div>
+          <div class="field"><label for="f-details">Occupation details</label>
+            <input id="f-details" name="details" placeholder="College, Company…"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" required placeholder="you@gmail.com"></div>
+          <div class="field"><label for="f-phone">Phone</label>
+            <input id="f-phone" name="phone" type="tel" required placeholder="+91 "></div>
+        </div>
+        <div class="field"><label for="f-whatsapp">WhatsApp number</label>
+          <input id="f-whatsapp" name="whatsapp" type="tel" placeholder="+91 98231 90939"></div>
+        <div class="field"><label for="f-heard">How did you come to know Swachha Sadak?</label>
+          <input id="f-heard" name="howHeard" placeholder="e.g. Through a friend"></div>
+        <div class="field"><label for="f-interest">Interested area — how would you like to participate?</label>
+          <textarea id="f-interest" name="interest" rows="3" placeholder="Share your idea"></textarea></div>
+        <button class="btn" type="submit" style="width:100%; justify-content:center;">Submit &amp; Join</button>
+        <div class="form-msg" id="form-msg"></div>
+      </div>
+      <div class="success-panel" id="success-panel">
+        <div class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l6 6L20 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>You're in, Associate.</h3>
+        <p>Check your email for confirmation. Then join the WhatsApp group.</p>
+        <a class="btn wa" id="wa-cta" href="https://chat.whatsapp.com/HeVz3s5FB8UFUo5JkeLGk6" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.1s.9 2.5 1.1 2.7c.1.2 1.9 2.9 4.6 4 .6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.6-.6 1.8-1.3.2-.6.2-1.1.2-1.2-.1-.2-.3-.2-.5-.3Z"/><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
+          Join WhatsApp Group
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="photo-viewer" role="dialog">
+  <button type="button" id="pv-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:32px; cursor:pointer; z-index:10;">&times;</button>
+  <div class="pv-stage" style="position:relative; display:flex; align-items:center; justify-content:center; max-width:92vw;">
+    <button type="button" id="pv-prev" style="position:absolute; left:-56px; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.2); border:none; color:#fff; width:44px; height:44px; border-radius:50%; cursor:pointer; font-size:18px;">&#10094;</button>
+    <img id="pv-img" src="" alt="" style="max-width:88vw; max-height:74vh; border-radius:8px;">
+    <button type="button" id="pv-next" style="position:absolute; right:-56px; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.2); border:none; color:#fff; width:44px; height:44px; border-radius:50%; cursor:pointer; font-size:18px;">&#10095;</button>
+  </div>
+  <div id="pv-caption" style="color:rgba(255,255,255,0.85); font-family:var(--mono); font-size:13px; margin-top:18px; text-align:center; max-width:700px;"></div>
+</div>
+
+<div id="doc-viewer" role="dialog">
+  <div class="dv-panel">
+    <div class="dv-head"><span id="dv-title"></span><div style="display:flex; gap:12px;"><a id="dv-download" class="btn" style="padding:6px 14px; font-size:11px;" href="" target="_blank">⬇ Download</a><button type="button" id="dv-close">&times;</button></div></div>
+    <iframe id="dv-frame" src="" title="Document preview"></iframe>
+  </div>
+</div>
+
+<div id="lightbox" role="dialog">
+  <div class="lb-panel">
+    <div class="lb-head"><span id="lb-title"></span><button type="button" id="lb-close">&times;</button></div>
+    <div id="lb-grid" class="lb-grid active"></div>
+    <div id="lb-viewer" class="lb-viewer">
+      <button type="button" id="lb-back" class="lb-back">&larr; All photos</button>
+      <div class="lb-viewer-stage">
+        <button type="button" id="lb-prev" class="lb-arrow lb-arrow-left">&#10094;</button>
+        <img id="lb-viewer-img" src="" alt="">
+        <button type="button" id="lb-next" class="lb-arrow lb-arrow-right">&#10095;</button>
+      </div>
+      <div id="lb-viewer-caption" class="lb-caption"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><img src="sl.png" alt=""><span>Swachha Sadak</span></div>
+        <p style="max-width:320px; margin-bottom:16px;">"Clean Roads. Responsible Citizens. Stronger Nation." An initiative of Sigma Consultants, led by Er. Dhananjay Apte.</p>
+        <p style="color:rgba(255,255,255,0.4); font-family:var(--mono); font-size:12px;">www.Swachhasadak.in</p>
+      </div>
+      <div><h4>Sections</h4><nav>
+        <a href="#about">About</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#appeal">Appeal</a>
+        <a href="#pledge">Pledge</a>
+      </nav></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Sigma Consultants — Swachha Sadak Mission</span><span>Quality · Lean · Six Sigma</span></div>
+  </div>
+</footer>
+
+<script>
+const CONFIG = { DRIVE_API_KEY:'AIzaSyDI6UBuJpo9QIuBi5O2XmgvtV6iL5P0-c8', GALLERY_FOLDER_ID:'1hqEunaltlz4l4qoFIWzXA4jqRbU9Xz6M', RECOGNITION_FOLDER_ID:'1MuURVn9J85x50ish7OXUmhMQN2HCPiH2', FORM_ENDPOINT:'https://script.google.com/macros/s/AKfycbyqaGguZ8ntdNfUQz1IDvL0lg303Xp5sRtIKOGGv4Rb6eFbneNPC2N1BWNlJpJDyEcz/exec' };
+const DOCS_ROOT_ID = '1ILPw1ejDbzOYA7bHYU8JY88W8gEIxMi3';
+
+/* ===== MOBILE MENU ===== */
+const mobileBtn = document.getElementById('mobile-menu-btn');
+const navLinks = document.querySelector('nav.links');
+if(mobileBtn && navLinks){
+  mobileBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+}
+
+/* ===== PROGRESS BAR ===== */
+const fillEl = document.querySelector('#route-progress .fill');
+function updateProgress(){
+  const h = document.documentElement;
+  const scrolled = h.scrollTop || document.body.scrollTop;
+  const height = h.scrollHeight - h.clientHeight;
+  fillEl.style.width = (height > 0 ? (scrolled/height)*100 : 0) + '%';
+}
+document.addEventListener('scroll', updateProgress, { passive:true });
+updateProgress();
+
+/* ===== FAB VISIBILITY ===== */
+const fab = document.getElementById('fab-join');
+const heroEl = document.querySelector('.hero');
+const fabObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => fab.classList.toggle('visible', !e.isIntersecting));
+}, { threshold:0 });
+fabObserver.observe(heroEl);
+
+/* ===== REVEAL ON SCROLL ===== */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){ entry.target.classList.add('in'); revealObserver.unobserve(entry.target); }
+  });
+}, { threshold:.15, rootMargin:'0px 0px -60px 0px' });
+document.querySelectorAll('[data-reveal], [data-reveal-stagger]').forEach(el => revealObserver.observe(el));
+document.querySelectorAll('[data-reveal-stagger]').forEach(group => {
+  [...group.children].forEach((c,i) => c.style.transitionDelay = (i*100)+'ms');
+});
+
+/* ===== COUNT-UP ===== */
+function animateCount(el){
+  const target = parseInt(el.dataset.count,10), suffix = el.dataset.suffix || '', duration = 1100, start = performance.now();
+  function tick(now){ const p = Math.min(1,(now-start)/duration); const eased = 1-Math.pow(1-p,3); el.textContent = Math.round(eased*target)+suffix; if(p<1) requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+}
+document.querySelectorAll('.count').forEach(animateCount);
+
+/* ===== PHOTO CAROUSELS ===== */
+let currentViewerList = [];
+let currentViewerIndex = 0;
+
+function baseName(name){ return name.replace(/\.[^.]+$/, '').trim().toLowerCase(); }
+
+async function fetchFolderPhotos(folderId){
+  if(!CONFIG.DRIVE_API_KEY || !folderId) return [];
+  const queue = [folderId];
+  const visited = new Set();
+  let images = [], texts = [], guard = 0;
+  while(queue.length && guard < 80){
+    guard++;
+    const currentFolderId = queue.shift();
+    if(visited.has(currentFolderId)) continue;
+    visited.add(currentFolderId);
+    const q = encodeURIComponent(`'${currentFolderId}' in parents and trashed=false`);
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType,thumbnailLink)&pageSize=200&key=${CONFIG.DRIVE_API_KEY}`);
+    const children = (await res.json()).files || [];
+    children.forEach(c => {
+      if(c.mimeType === 'application/vnd.google-apps.folder'){ queue.push(c.id); }
+      else if(c.mimeType.startsWith('image/')){ images.push({ ...c, parentId: currentFolderId }); }
+      else if(c.mimeType === 'text/plain'){ texts.push({ ...c, parentId: currentFolderId }); }
+    });
+  }
+  const textByKey = {};
+  texts.forEach(t => { textByKey[t.parentId + '::' + baseName(t.name)] = t; });
+  return await Promise.all(images.map(async (img) => {
+    const match = textByKey[img.parentId + '::' + baseName(img.name)];
+    let description = '';
+    if(match){
+      try{
+        const r = await fetch(`https://www.googleapis.com/drive/v3/files/${match.id}?alt=media&key=${CONFIG.DRIVE_API_KEY}`);
+        description = (await r.text()).trim();
+      }catch(e){}
+    }
+    return { ...img, description };
+  }));
+}
+
+async function initPhotoCarousel(folderId, stateElId, trackElId, prevBtnId, nextBtnId, labelName){
+  const stateEl = document.getElementById(stateElId);
+  const track = document.getElementById(trackElId);
+  const prevBtn = document.getElementById(prevBtnId);
+  const nextBtn = document.getElementById(nextBtnId);
+  if(!stateEl || !track) return;
+  if(!CONFIG.DRIVE_API_KEY){
+    stateEl.innerHTML = '';
+    track.innerHTML = `<div class="gallery-empty-banner">${labelName} isn't connected yet — add a Drive API key in CONFIG.</div>`;
+    return;
+  }
+  try{
+    stateEl.textContent = `Loading ${labelName.toLowerCase()} photos…`;
+    const photoList = await fetchFolderPhotos(folderId);
+    if(photoList.length === 0){
+      stateEl.innerHTML = '';
+      track.innerHTML = `<div class="gallery-empty-banner">No photos yet — once images are uploaded inside the ${labelName} Google Drive folder, they'll show up here automatically.</div>`;
+      return;
+    }
+    stateEl.textContent = `${photoList.length} photo${photoList.length===1?'':'s'} connected live from Google Drive`;
+    track.innerHTML = '';
+    photoList.forEach((file, i) => {
+      const slide = document.createElement('button');
+      slide.type = 'button'; slide.className = 'car-slide';
+      slide.innerHTML = `<img src="${file.thumbnailLink.replace('=s220','=s600')}" alt="${file.name || ''}" loading="lazy">
+        <div class="car-caption">${file.description || file.name}</div>`;
+      slide.addEventListener('click', () => openPhotoViewer(i, photoList));
+      track.appendChild(slide);
+    });
+    if(prevBtn) prevBtn.addEventListener('click', () => track.scrollBy({ left: -300, behavior: 'smooth' }));
+    if(nextBtn) nextBtn.addEventListener('click', () => track.scrollBy({ left: 300, behavior: 'smooth' }));
+  }catch(err){
+    stateEl.textContent = `Could not load ${labelName.toLowerCase()} — check the Drive API key and folder sharing settings.`;
+    console.error(err);
+  }
+}
+
+(async function(){
+  let recFolderId = CONFIG.RECOGNITION_FOLDER_ID;
+  if(!recFolderId || recFolderId.startsWith('YOUR_')){
+    try {
+      const q = encodeURIComponent(`'${CONFIG.GALLERY_FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&key=${CONFIG.DRIVE_API_KEY}`);
+      const folders = (await res.json()).files || [];
+      const match = folders.find(f => f.name.toLowerCase().includes('recognition'));
+      if(match) recFolderId = match.id;
+    } catch(e) { console.error('Auto-detect error:', e); }
+  }
+  initPhotoCarousel(recFolderId, 'rec-carousel-state', 'rec-carousel-track', 'rec-car-prev', 'rec-car-next', 'Recognitions');
+})();
+initPhotoCarousel(CONFIG.GALLERY_FOLDER_ID, 'gal-carousel-state', 'gal-carousel-track', 'gal-car-prev', 'gal-car-next', 'Gallery');
+
+function openPhotoViewer(i, list) {
+  if (!list || list.length === 0) return;
+  currentViewerList = list;
+  currentViewerIndex = (i + list.length) % list.length;
+  document.getElementById('photo-viewer').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  updateViewerImage();
+}
+function updateViewerImage() {
+  if (currentViewerList.length === 0) return;
+  const file = currentViewerList[currentViewerIndex];
+  document.getElementById('pv-img').src = file.thumbnailLink.replace('=s220','=s1600');
+  const desc = file.description ? file.description + ' — ' : '';
+  document.getElementById('pv-caption').textContent = `${desc}${currentViewerIndex+1} of ${currentViewerList.length}`;
+}
+function showCarouselImage(delta) {
+  if (currentViewerList.length === 0) return;
+  currentViewerIndex = (currentViewerIndex + delta + currentViewerList.length) % currentViewerList.length;
+  updateViewerImage();
+}
+function closePhotoViewer(){
+  document.getElementById('photo-viewer').style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.getElementById('pv-close').addEventListener('click', closePhotoViewer);
+document.getElementById('pv-prev').addEventListener('click', () => showCarouselImage(-1));
+document.getElementById('pv-next').addEventListener('click', () => showCarouselImage(1));
+document.getElementById('photo-viewer').addEventListener('click', (e) => { if(e.target.id === 'photo-viewer') closePhotoViewer(); });
+document.addEventListener('keydown', (e) => {
+  if(document.getElementById('photo-viewer').style.display !== 'flex') return;
+  if(e.key === 'Escape') closePhotoViewer();
+  if(e.key === 'ArrowRight') showCarouselImage(1);
+  if(e.key === 'ArrowLeft') showCarouselImage(-1);
+});
+
+/* ===== DOCUMENTS ===== */
+function docKind(mimeType){
+  if(mimeType.includes('pdf')) return 'pdf';
+  if(mimeType.includes('presentation')) return 'ppt';
+  if(mimeType.includes('spreadsheet')) return 'sheet';
+  if(mimeType.includes('document') || mimeType.includes('word')) return 'doc';
+  return 'other';
+}
+function docLabel(kind){
+  return { pdf:'PDF', ppt:'Slides', sheet:'Sheet', doc:'Doc', other:'File' }[kind];
+}
+
+async function loadDocuments(){
+  const stateEl = document.getElementById('docs-state'), gridEl = document.getElementById('docs-grid');
+  if(!CONFIG.DRIVE_API_KEY){
+    if(stateEl) stateEl.innerHTML = '';
+    if(gridEl) gridEl.innerHTML = `<div class="gallery-empty-banner">Documents aren't connected yet — add a Drive API key in CONFIG.</div>`;
+    return;
+  }
+  try{
+    const albums = [];
+    const queue = [
+      { id: DOCS_ROOT_ID, name: 'General' },
+      { id: CONFIG.GALLERY_FOLDER_ID, name: 'Gallery' }
+    ];
+    const visited = new Set();
+    let guard = 0;
+    while(queue.length && guard < 80){
+      guard++;
+      const folder = queue.shift();
+      if(visited.has(folder.id)) continue;
+      visited.add(folder.id);
+      const q = encodeURIComponent(`'${folder.id}' in parents and trashed=false`);
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType)&key=${CONFIG.DRIVE_API_KEY}`);
+      const children = (await res.json()).files || [];
+      const subfolders = children.filter(c => c.mimeType === 'application/vnd.google-apps.folder');
+      const docs = children.filter(c => c.mimeType !== 'application/vnd.google-apps.folder' && !c.mimeType.startsWith('image/') && c.mimeType !== 'text/plain');
+      if(docs.length > 0){ albums.push({ name: folder.name, files: docs }); }
+      subfolders.forEach(sf => queue.push({ id: sf.id, name: sf.name }));
+    }
+    if(albums.length === 0){
+      if(stateEl) stateEl.innerHTML = '';
+      if(gridEl) gridEl.innerHTML = `<div class="gallery-empty-banner">No documents found yet.</div>`;
+      return;
+    }
+    const totalFiles = albums.reduce((n,a) => n + a.files.length, 0);
+    if(stateEl) stateEl.textContent = `${albums.length} folder${albums.length===1?'':'s'} · ${totalFiles} document${totalFiles===1?'':'s'} connected live from Google Drive`;
+    if(gridEl){
+      gridEl.innerHTML = '';
+      albums.forEach((album, i) => {
+        const card = document.createElement('button');
+        card.type = 'button'; card.className = 'doc-album'; card.style.transitionDelay = (i*70)+'ms';
+        card.innerHTML = `<svg class="folder-icon" viewBox="0 0 24 24" fill="none"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <h4>${album.name}</h4>
+          <span>${album.files.length} document${album.files.length===1?'':'s'}</span>`;
+        card.addEventListener('click', () => openDocAlbum(album.name, album.files));
+        gridEl.appendChild(card);
+        requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('shown')));
+      });
+    }
+    document.querySelectorAll('[data-section-docs]').forEach(secEl => {
+      const secName = secEl.getAttribute('data-section-docs').toLowerCase();
+      const matchedAlbum = albums.find(a => a.name.toLowerCase() === secName || a.name.toLowerCase().includes(secName));
+      if(matchedAlbum){
+        secEl.innerHTML = `
+          <div style="border-top: 1px dashed rgba(0,0,0,0.06); padding-top: 20px; margin-top: 20px;">
+            <div class="eyebrow" style="margin-bottom:10px;">Section Documents</div>
+            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+              <button type="button" class="doc-album shown" style="display:inline-flex; align-items:center; gap:12px; padding:12px 18px; margin:0;" onclick='openDocAlbum("${matchedAlbum.name.replace(/'/g, "\\'")}", ${JSON.stringify(matchedAlbum.files).replace(/'/g, "&apos;")})'>
+                <svg class="folder-icon" style="width:24px; height:24px; margin:0;" viewBox="0 0 24 24" fill="none"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <div style="text-align:left;">
+                  <h4 style="font-size:14.5px; margin:0;">${matchedAlbum.name} Folder</h4>
+                  <span style="font-size:11px;">${matchedAlbum.files.length} File${matchedAlbum.files.length===1?'':'s'} (Click to Preview)</span>
+                </div>
+              </button>
+            </div>
+          </div>`;
+      }
+    });
+  }catch(err){ if(stateEl) stateEl.textContent = 'Could not load documents — check the Drive API key and folder sharing settings.'; console.error(err); }
+}
+loadDocuments();
+
+function openDocAlbum(albumName, files){
+  const overlay = document.getElementById('lightbox');
+  const titleEl = document.getElementById('lb-title');
+  const gridEl = document.getElementById('lb-grid');
+  const viewerEl = document.getElementById('lb-viewer');
+  titleEl.textContent = albumName;
+  viewerEl.classList.remove('active');
+  gridEl.classList.add('active', 'docs-mode');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  gridEl.innerHTML = '';
+  files.forEach(file => {
+    const kind = docKind(file.mimeType);
+    const card = document.createElement('button');
+    card.type = 'button'; card.className = 'doc-card shown';
+    card.innerHTML = `<div class="doc-icon ${kind}">${docLabel(kind)}</div>
+      <div class="doc-meta"><div class="doc-name">${file.name}</div><div class="doc-type">${docLabel(kind)}</div></div>`;
+    card.addEventListener('click', () => { closeLightbox(); openDocument(file.id, file.name); });
+    gridEl.appendChild(card);
+  });
+}
+function openDocument(fileId, name){
+  document.getElementById('dv-title').textContent = name;
+  document.getElementById('dv-frame').src = `https://drive.google.com/file/d/${fileId}/preview`;
+  const dlBtn = document.getElementById('dv-download');
+  if(dlBtn){ dlBtn.href = `https://drive.google.com/uc?export=download&id=${fileId}`; }
+  document.getElementById('doc-viewer').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeDocViewer(){
+  document.getElementById('doc-viewer').style.display = 'none';
+  document.getElementById('dv-frame').src = '';
+  document.body.style.overflow = '';
+}
+document.getElementById('dv-close').addEventListener('click', closeDocViewer);
+document.getElementById('doc-viewer').addEventListener('click', (e) => { if(e.target.id === 'doc-viewer') closeDocViewer(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && document.getElementById('doc-viewer').style.display === 'flex') closeDocViewer(); });
+
+function closeLightbox(){
+  document.getElementById('lightbox').style.display = 'none';
+  document.getElementById('lb-grid').classList.remove('docs-mode');
+  document.body.style.overflow = '';
+}
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', (e) => { if(e.target.id === 'lightbox') closeLightbox(); });
+document.addEventListener('keydown', (e) => {
+  if(document.getElementById('lightbox').style.display !== 'flex') return;
+  if(e.key === 'Escape') closeLightbox();
+});
+
+/* ===== STAKEHOLDERS ===== */
+const STAKEHOLDERS = [
+  { key:'companies', label:'Companies', commitments:['Pledge stickers inside premises; awareness cards to staff','Take responsibility for surrounding-area cleanliness','5S training for productivity and neatness, across all functions','Organise a singing/awareness programme','Keep and maintain roadside garbage bins for litter and paan spitting','Build and maintain public toilets, with an attendant'] },
+  { key:'colleges', label:'Educational Institutes', commitments:['Pledge stickers inside premises; awareness cards to students and parents','Take responsibility for surrounding-area cleanliness','5S training toward administrative excellence — for faculty, staff and students','Organise a singing/awareness programme','Offer internships in Social Engineering &amp; Management using Lean, Six Sigma'] },
+  { key:'holy', label:'Holy Places', commitments:['Stickers inside the premises, in lodging rooms, and on prasad packets','Prevent littering on roads during Wari/Yatra using portable collection bins','5S training to improve day-to-day operations','Organise a singing/awareness programme','Keep and maintain bins during yatras and warees'] },
+  { key:'transport', label:'Auto, Cab &amp; Associations', commitments:["Pledge stickers on the vehicle's front glass",'Take responsibility for surrounding-area cleanliness','5S lecture on neatness for passenger delight — via association meetings','Organise a singing/awareness programme'] },
+  { key:'hawkers', label:'Panwalas &amp; Hawkers', commitments:['Pledge stickers at the front of the stall','Take responsibility for surrounding-area cleanliness','5S lecture on hygienic surroundings — to attract more customers','Organise a singing/awareness programme','Keep bins near the stall for cigarette butts, spitting, and vegetable/paper waste'] },
+  { key:'shops', label:'Shops &amp; Associations', commitments:['Pledge stickers at the shop front','Take responsibility for surrounding-area cleanliness','5S lecture on hygienic surroundings — to attract more customers','Organise a singing/awareness programme'] },
+  { key:'transit', label:'Railway &amp; Bus Stations', commitments:['Pledge stickers inside the platform/cart areas'] },
+  { key:'municipal', label:'Municipal Corporation', commitments:['Appeal to newspaper distributors, flower shops and paan shops to avoid littering, and to maintain Nirmalya Kalash and spitting/cigarette bins','Appeal to shopkeepers to keep surroundings clean','Appoint voluntary ambassadors with authority to fine litterers in public places','Permit companies to install and maintain garbage bins, and build/maintain public toilets with an attendant','Support bins during yatras and warees'] },
+  { key:'pmo', label:'PMO', commitments:['National-level backing for a citizen-led, systems-based cleanliness movement'] }
+];
+function renderStakeholders(){
+  const tabsEl = document.getElementById('stake-tabs'), panelsEl = document.getElementById('stake-panels'), indicator = document.getElementById('stake-indicator');
+  const tabButtons = [];
+  STAKEHOLDERS.forEach((s,i) => {
+    const tab = document.createElement('button');
+    tab.className = 'stake-tab'+(i===0?' active':''); tab.type='button'; tab.innerHTML = s.label; tab.dataset.key = s.key;
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.stake-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.stake-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active'); document.getElementById('panel-'+s.key).classList.add('active');
+      moveIndicator(tab);
+    });
+    tabsEl.appendChild(tab); tabButtons.push(tab);
+    const panel = document.createElement('div');
+    panel.className = 'stake-panel'+(i===0?' active':''); panel.id = 'panel-'+s.key;
+    panel.innerHTML = `<h3>${s.label} — what's asked</h3><ul class="commit-list">${s.commitments.map((c,j)=>`<li style="animation-delay:${j*60}ms">${c}</li>`).join('')}</ul>`;
+    panelsEl.appendChild(panel);
+  });
+  function moveIndicator(tab){ indicator.style.left = tab.offsetLeft+'px'; indicator.style.top = tab.offsetTop+'px'; indicator.style.width = tab.offsetWidth+'px'; }
+  moveIndicator(tabButtons[0]);
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(() => moveIndicator(document.querySelector('.stake-tab.active')));
+  }
+  window.addEventListener('load', () => moveIndicator(document.querySelector('.stake-tab.active')));
+  window.addEventListener('resize', () => moveIndicator(document.querySelector('.stake-tab.active')));
+}
+renderStakeholders();
+
+/* ===== JOIN MODAL ===== */
+const joinModal = document.getElementById('join-modal');
+const joinModalClose = document.getElementById('join-modal-close');
+const joinTriggers = document.querySelectorAll('.join-trigger');
+function openJoinModal(){ joinModal.classList.add('open'); document.body.classList.add('join-modal-open'); }
+function closeJoinModal(){ joinModal.classList.remove('open'); document.body.classList.remove('join-modal-open'); }
+joinTriggers.forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); openJoinModal(); }));
+joinModalClose.addEventListener('click', closeJoinModal);
+joinModal.addEventListener('click', (e) => { if(e.target === joinModal) closeJoinModal(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && joinModal.classList.contains('open')) closeJoinModal(); });
+
+/* ===== FORM ===== */
+document.getElementById('signup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('form-msg'), form = e.target;
+  const data = Object.fromEntries(new FormData(form).entries());
+  if(!CONFIG.FORM_ENDPOINT){
+    msg.textContent = "Sign-up isn't connected yet — add your Apps Script Web App URL to CONFIG.FORM_ENDPOINT.";
+    msg.className = 'form-msg show warn'; return;
+  }
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true; submitBtn.textContent = 'Submitting…';
+  try{
+    await fetch(CONFIG.FORM_ENDPOINT, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(data) });
+    document.getElementById('form-fields').style.display = 'none';
+    document.getElementById('success-panel').classList.add('show');
+  }catch(err){
+    msg.textContent = 'Something went wrong sending this — please try again or WhatsApp us directly.';
+    msg.className = 'form-msg show warn'; console.error(err);
+  }finally{
+    submitBtn.disabled = false; submitBtn.textContent = 'Submit & Join';
+  }
+});
+</script>
+</body>
+</html>
