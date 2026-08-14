@@ -877,7 +877,7 @@ async function initPhotoCarousel(folderId, stateElId, trackElId, prevBtnId, next
       slide.type = 'button'; slide.className = 'car-slide';
       slide.innerHTML = `<img src="${file.thumbnailLink.replace('=s220','=s600')}" alt="${file.name || ''}" loading="lazy">
         <div class="car-caption">${file.description || file.name}</div>`;
-      slide.addEventListener('click', () => openPhotoViewer(globalIdx, startIndex, startIndex + photoList.length));
+      slide.addEventListener('click', () => openPhotoViewer(globalIdx));
       track.appendChild(slide);
     });
 
@@ -908,26 +908,18 @@ async function initPhotoCarousel(folderId, stateElId, trackElId, prevBtnId, next
 initPhotoCarousel(CONFIG.GALLERY_FOLDER_ID, 'gal-carousel-state', 'gal-carousel-track', 'gal-car-prev', 'gal-car-next', 'Gallery');
 
 /* full-screen photo viewer */
-let pvRangeStart = 0;
-let pvRangeEnd = 0; // exclusive
-
-function openPhotoViewer(i, rangeStart, rangeEnd){
-  pvRangeStart = (typeof rangeStart === 'number') ? rangeStart : 0;
-  pvRangeEnd = (typeof rangeEnd === 'number') ? rangeEnd : allViewerImages.length;
+function openPhotoViewer(i){
   document.getElementById('photo-viewer').classList.add('open');
   document.body.style.overflow = 'hidden';
   showCarouselImage(i);
 }
 function showCarouselImage(i){
   if(allViewerImages.length === 0) return;
-  const rangeLen = pvRangeEnd - pvRangeStart;
-  if(rangeLen <= 0) return;
-  // wrap i within [pvRangeStart, pvRangeEnd) so prev/next never leaves this album
-  pvIndex = pvRangeStart + (((i - pvRangeStart) % rangeLen) + rangeLen) % rangeLen;
+  pvIndex = (i + allViewerImages.length) % allViewerImages.length;
   const file = allViewerImages[pvIndex];
   document.getElementById('pv-img').src = file.thumbnailLink.replace('=s220','=s1600');
   const desc = file.description ? file.description + ' — ' : '';
-  document.getElementById('pv-caption').textContent = `${desc}${(pvIndex - pvRangeStart)+1} of ${rangeLen}`;
+  document.getElementById('pv-caption').textContent = `${desc}${pvIndex+1} of ${allViewerImages.length}`;
 }
 function closePhotoViewer(){
   document.getElementById('photo-viewer').classList.remove('open');
